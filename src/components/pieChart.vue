@@ -41,7 +41,7 @@ export default {
     let extraLayer = null;
 
     const height = 350;
-    const width = 450
+    const width = 450;
     const radius = Math.min(height, width) / 2.5;
     const innerRadius = Math.min(height, width) / 10;
     const centerX = width / 2;

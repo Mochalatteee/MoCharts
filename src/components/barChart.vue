@@ -17,11 +17,11 @@
   props: {
     data: {
       type: Array,
-      default: () => [13000, 50000, 7000, 12000, 25000]
+      default: () => [13000, 50000, 7000, 12000, 25000, 14000,1000]
     },
     dataLabel: {
       type: Array,
-      default: () => ["Item1", "Item2", "Item3", "Item4", "Item5"]
+      default: () => ["Item1", "Item2", "Item3", "Item4", "Item5", " Item6"," Item7"]
     },
     colorMode: {
       type: String,
@@ -40,12 +40,14 @@
      let labelLayer = null;
      let extraLayer = null;
 
+    const ctnHeight = 350;
+    const ctnWidth = 450;
     const data = props.data;
     const dataLabel = props.dataLabel;
     const colors = ["#1456EB","#30C9C9","#FBC645","#6241E7","#279AE0"];
-    const barWidth = 35;
-    const barSpacing = 25;
-    const maxHeight = 250;
+    const barWidth = (ctnWidth / data.length - ctnWidth/50 )/ 2;
+    const barSpacing = barWidth - ctnWidth/50;
+    const maxHeight = ctnHeight - 100;
     const maxData = getMaxData(Math.max(...data));
 
     // 监听数据变化，实现响应式
@@ -54,23 +56,9 @@
         return;
       }
       if (newValue !== oldValue) {
-        drawBars(barLayer, newValue, 0); // 重置动画
+        redrawChart(colorMode.value, data, dataLabel);
       }
      });
-
-     // 切换颜色模式的方法
-     const toggleColorMode = () => {
-        // console.log(colorMode.value);
-
-        // emit('update:colorMode', props.colorMode === 'day' ? 'night' : 'day');
-        // colorMode.value = colorMode.value === 'day' ? 'night' : 'day';
-        // if(colorMode.value == 'day'){
-        //   container.value.style.backgroundColor = '#ffffff';
-        // }else{
-        //   container.value.style.backgroundColor = '#061936';
-        // }
-        // redrawChart(colorMode.value);
-      };
 
       watch(() => props.colorMode, (newValue, oldValue) => {
         colorMode.value = newValue === 'day' ? 'night' : 'day';
@@ -79,19 +67,22 @@
         } else {
             container.value.style.backgroundColor = '#061936';
         }
-        redrawChart(colorMode.value);
+        redrawChart(colorMode.value, data, dataLabel);
       });
 
-      const redrawChart = (currentMode) => {
-        drawAxis(xAxisLayer,currentMode);
+      const redrawChart = (currentMode, data, dataLabel) => {
+        if(data.length !== dataLabel.length) {
+          return console.log("数据数目不匹配")
+        }
+        drawAxis(xAxisLayer,currentMode,ctnHeight);
          // 初始化数据
         //   动画
          const anim = new Konva.Animation((frame) => {
            const elapsed = frame.time;
            if (elapsed < 1000) { // 1000ms内执行动画
-             drawBars(barLayer, data, elapsed, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel);
-             drawDynamicLabel(labelLayer, dataLabel, barSpacing, barWidth,currentMode);
-             drawDynamicAxis(yAxisLayer, maxHeight, data, maxData,currentMode);
+             drawBars(barLayer, data, elapsed, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel, ctnHeight,ctnWidth);
+             drawDynamicLabel(labelLayer, dataLabel, barSpacing, barWidth,currentMode,ctnHeight,ctnWidth);
+             drawDynamicAxis(yAxisLayer, maxHeight, data, maxData,currentMode,ctnHeight,ctnWidth);
 
            } else {
              anim.stop(); // 加载完成后停止动画
@@ -108,8 +99,8 @@
        if (container.value) {
          stage = new Konva.Stage({
            container: container.value,
-           width: 450,
-           height: 350
+           width: ctnWidth,
+           height: ctnHeight
          });
  
          barLayer = new Konva.Layer();
@@ -124,7 +115,7 @@
          stage.add(barLayer);
          stage.add(extraLayer);
  
-         redrawChart(colorMode.value);
+         redrawChart(colorMode.value, data, dataLabel);
        }
      }); 
 
@@ -134,16 +125,16 @@
 
  
  
- function drawBars(layer, data, elapsed, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel) {
+ function drawBars(layer, data, elapsed, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel, ctnHeight) {
    layer.removeChildren();
- 
+  //  console.log(ctnHeight);
    data.forEach((value, index) => {
      const x = (index + 1.5) * (barWidth + barSpacing);
      const height = (elapsed / 1000) * maxHeight * (value / maxData);
  
      const rect = new Konva.Rect({
        x: x,
-       y: 310 - height,
+       y: ctnHeight - 0.1 * ctnHeight - height,
        width: barWidth ,
        height: height,
        cornerRadius: [10, 10, 0, 0],
@@ -233,37 +224,41 @@
    return nearestMultiple;
  }
 
- function drawDynamicLabel(layer, dataLabel, barSpacing, barWidth, colorMode){
+ function drawDynamicLabel(layer, dataLabel, barSpacing, barWidth, colorMode, ctnHeight, ctnWidth){
    layer.removeChildren();
 
    dataLabel.forEach((value, index)=>{
      const x = (index + 1.5) * (barWidth + barSpacing);
-     const width = barWidth;
+     const width = barWidth + 0.5 * barSpacing;
 
      const text  = new Konva.Text({
        x: x,
-       y: 310 + 10,
+       y: 0.9 * ctnHeight + 10,
        text: value,
        fontSize: 11,
-       align: 'center',
+       align: 'left',
        width: width,
        fill: colorMode === 'day'? '#86909C':'#D5D5D6CC' // 字体颜色
      });
+    //  console.log(value,text.x(),text.y());
 
      layer.add(text)
    })
    
  }
 
- function drawDynamicAxis(layer, maxHeight, data, maxData,colorMode){
+ function drawDynamicAxis(layer, maxHeight, data, maxData,colorMode,ctnHeight,ctnWidth){
    layer.removeChildren();
    let modeColor = colorMode === 'day'? '#86909C':'#D5D5D6CC';
 
-   for(let i = 0; i < data.length; i++){
-     let value = (maxData - i*(maxData/data.length)).toLocaleString();
+   for(let i = 0; i < 5; i++){
+      
+     let value = (maxData - i*(maxData/5)).toLocaleString();
+     let tempY = 0.9 * ctnHeight - maxHeight + i*(0.85 * ctnHeight - maxHeight);
 
      const axis = new Konva.Line({
-       points: [50, 310 - maxHeight + i*(300 - maxHeight), 400, 310 - maxHeight + i*(300 - maxHeight)], // x 轴坐标
+       points: [0.1*ctnWidth, tempY,
+        0.9 * ctnWidth, tempY], // x 轴坐标
        stroke: modeColor,
        strokeWidth: 0.5,
        dash: [5, 5],
@@ -273,11 +268,11 @@
 
      const text = new Konva.Text({
        x: 5,
-       y: 310-4 - maxHeight + i*(300 - maxHeight),
+       y: tempY-4,
        fill: modeColor,
        fontSize: 10,
        text: value,
-       width: 38,
+       width: 35,
        align: 'right',
      })
 
@@ -286,10 +281,10 @@
    
  }
  
- function drawAxis(layer,colorMode) {
+ function drawAxis(layer,colorMode,ctnHeight) {
 
    const xAxis = new Konva.Line({
-     points: [50, 310, 400, 310], // x 轴坐标
+     points: [50, 0.9 * ctnHeight, 400, 0.9 * ctnHeight], // x 轴坐标
      stroke: colorMode === 'day'? '#86909C':'#D5D5D6CC',
      strokeWidth: 0.5
    });
@@ -297,9 +292,9 @@
    // 添加 x 轴上的文字
    const xAxisText = new Konva.Text({
      x: 400, 
-     y: 310 + 10, 
+     y: 0.9 * ctnHeight + 10, 
      text: 'X Axis', 
-     fontSize: 14, 
+     fontSize: 12, 
      fill: colorMode === 'day'? '#86909C':'#D5D5D6CC', 
    });
 

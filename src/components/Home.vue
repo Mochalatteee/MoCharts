@@ -1,6 +1,6 @@
 <template>
   <div>
-      <h1>Fancy Chart</h1>
+      <h1>Mocharts</h1>
 
       <div class="component-box">
           <div class="component-ctn">
@@ -12,7 +12,7 @@
                       <button @click="goToBarChart">Details</button>
                   </div>
 
-                  <barChart :data="[210,100,40,50,65]" :color-mode="barColorMode"></barChart>
+                  <barChart :data="[210,100,40,50,65,230,10]" :color-mode="barColorMode"></barChart>
               </div>
           </div>
 
@@ -24,7 +24,7 @@
                       <button @click="goToPieChart">Details</button>
                   </div>
 
-                  <pieChart :data="[50,100,40,50,65]" :color-mode="pieColorMode"></pieChart>
+                  <pieChart :data="[50,100,40,50,65, 5, 120]" :color-mode="pieColorMode"></pieChart>
               </div>
           </div>
       </div>
@@ -77,7 +77,7 @@ export default {
       border: solid 1px #00000010;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
       padding: 10px;
-      height: 50%;
+      height: 70vh;
   }
 
   .chart-ctn {
