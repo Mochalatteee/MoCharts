@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import barChart from '../components/barChart.vue';
-import Home from '../components/Home.vue';
+import Home from '../layouts/Home.vue';
 import pieChart from "../components/pieChart.vue"
 
 const routes = [{

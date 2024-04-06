@@ -26,6 +26,10 @@
     colorMode: {
       type: String,
       dafault: 'day'
+    },
+    colors: {
+      type: Array,
+      default: () => ["#1456EB","#3BE8EB","#FBC645","#6241E7","#279AE0"]
     }
   },
   
@@ -40,11 +44,13 @@
      let labelLayer = null;
      let extraLayer = null;
 
-    const ctnHeight = 350;
-    const ctnWidth = 450;
+    
     const data = props.data;
     const dataLabel = props.dataLabel;
-    const colors = ["#1456EB","#30C9C9","#FBC645","#6241E7","#279AE0"];
+    const colors = props.colors;
+
+    const ctnHeight = 350;
+    const ctnWidth = 450;
     const barWidth = (ctnWidth / data.length - ctnWidth/50 )/ 2;
     const barSpacing = barWidth - ctnWidth/50;
     const maxHeight = ctnHeight - 100;
@@ -61,7 +67,7 @@
      });
 
       watch(() => props.colorMode, (newValue, oldValue) => {
-        colorMode.value = newValue === 'day' ? 'night' : 'day';
+        colorMode.value = newValue;
         if (colorMode.value === 'day') {
             container.value.style.backgroundColor = '#ffffff';
         } else {
@@ -114,6 +120,7 @@
          stage.add(yAxisLayer);
          stage.add(barLayer);
          stage.add(extraLayer);
+         console.log(colorMode)
  
          redrawChart(colorMode.value, data, dataLabel);
        }
@@ -185,7 +192,7 @@
        if(!anim.isRunning()){
          tooltip.position({
              x: rect.x() + rect.width(),
-             y: rect.y()* 1.1
+             y: rect.y()* 1.025
          }); // 设置文本位置
          tooltip.show(); // 显示文本组件
          extraLayer.batchDraw(); // 批量绘制图层
@@ -322,7 +329,7 @@
 
 <<style scoped>
  #container{
-   background-color: #061936;
+   background-color: #ffffff;
    border-radius: 5px;
    border: solid 1px #00000005;
    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.02); */

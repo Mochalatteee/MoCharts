@@ -12,7 +12,9 @@
                       <button @click="goToBarChart">Details</button>
                   </div>
 
-                  <barChart :data="[210,100,40,50,65,230,10]" :color-mode="barColorMode"></barChart>
+                  <barChart :data="[210,100,40,50,65,40,10]" 
+                    :color-mode="barColorMode"
+                    :colors=this.$colors></barChart>
               </div>
           </div>
 
@@ -24,7 +26,9 @@
                       <button @click="goToPieChart">Details</button>
                   </div>
 
-                  <pieChart :data="[50,100,40,50,65, 5, 120]" :color-mode="pieColorMode"></pieChart>
+                  <pieChart :data="[50,100,40,50,65, 5, 120]" 
+                    :color-mode="pieColorMode"
+                    :colors=this.$colors></pieChart>
               </div>
           </div>
       </div>
@@ -32,8 +36,8 @@
 </template>
 
 <script>
-import BarChart from './barChart.vue';
-import PieChart from './pieChart.vue';
+import BarChart from '../components/barChart.vue';
+import PieChart from '../components/pieChart.vue';
 
 export default {
   components: {

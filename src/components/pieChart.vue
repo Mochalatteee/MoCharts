@@ -30,6 +30,10 @@ export default {
     typeMode: {
       type: String,
       dafault: 'rose'
+    },
+    colors: {
+      type: Array,
+      default: () => ["#1456EB","#3BE8EB","#FBC645","#6241E7","#279AE0"]
     }
   },
 
@@ -46,14 +50,17 @@ export default {
     const innerRadius = Math.min(height, width) / 10;
     const centerX = width / 2;
     const centerY = height / 2;
-    const colors = ["#1456EB","#3BE8EB","#FBC645","#6241E7","#279AE0"];
+
     const data = props.data; 
     const dataLabel = props.dataLabel;
+    const colors = props.colors;
     const dataSum = data.reduce((accumulator, currentValue) => {
                       return accumulator + currentValue;
                     }, 0);
 
     let cumulativeAngle = -90;
+
+    console.log(colors);
 
     watch(() => props.data, (newValue, oldValue) => {
       if (!container.value) {
@@ -65,7 +72,7 @@ export default {
      });
 
      watch(() => props.colorMode, (newValue, oldValue) => {
-        colorMode.value = newValue === 'day' ? 'night' : 'day';
+        colorMode.value = newValue;
         if(colorMode.value === 'day'){
           container.value.style.backgroundColor = '#ffffff';
         }else{
@@ -252,7 +259,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
 
 <style>
 #container{
-   background-color: #061936;
+   background-color: #ffffff;
    border-radius: 5px;
    border: solid 1px #00000005;
    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.02); */
