@@ -47,13 +47,13 @@ export default {
       top: 0;
       left: 0;
       width: 100vw;
-      height: 4rem;
+      height: 64px;
       background-color: white;
       border-bottom: solid 1px #eaeaea;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1.5rem;
+      padding: 0 24px;
       z-index: 100;
   }
 
@@ -63,32 +63,32 @@ export default {
 
   .category-box{
     position: fixed;
-    top: 4rem;
+    top: 64px;
     left: 0;
     background-color: white;
-    width: 10rem;
+    width: 160px;
     border-right: solid 1px #eaeaea;
     height: 100vh;
   }
 
   .display-box{
-    margin-top: 4rem;
-    margin-left: 10rem;
-    padding: 1rem;
+    margin-top: 64px;
+    margin-left: 160px;
+    padding: 16px;
   }
 
   .logo{
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 56px;
+    height: 56px;
     background-image: url(../assets/4.png);
     background-size: cover; 
     background-position: center; 
   }
 
   .website-title{
-    font-size: 1.2rem;
+    font-size: 20px;
     color: #3c61cf;
-    margin: 0.5rem;
+    margin: 8px;
   }
   
   .nav-item-box{
@@ -99,7 +99,7 @@ export default {
 
   .nav-item{
     height: 100%;
-    padding: 0.8rem;
+    padding: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -108,18 +108,18 @@ export default {
   .category-list{
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 16px;
     align-items: flex-start;
   }
 
   .category-item{
-    margin: 0.8rem;
+    margin: 13px;
     cursor: pointer;
   }
 
   .category-item-title{
-    font-size: 1.1rem;
-    margin: 0.8rem;
+    font-size: 18px;
+    margin: 13px;
     cursor: default;
   }
 
