@@ -26,6 +26,48 @@
               <div class="chart-ctn">
                   <div class="title-box"><p>Rose Chart</p></div>
                   <div class="modify-ctn">
+                      <button @click="togglePieColorMode">{{ roseColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                      <button @click="goToPieChart">Details</button>
+                  </div>
+                  <div class="chart-box">
+                    <roseChart 
+                        v-if="isSizeAvailable"
+                        :data="[50,100,40,50,65, 5, 120]" 
+                        :color-mode="pieColorMode"
+                        :colors=this.$colors
+                        :size="divSize"
+                        ></roseChart>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+
+      <div class="component-box">
+          <div class="component-ctn">
+              <div class="chart-ctn">
+                  <div class="title-box"><p >Line Chart</p></div>
+                  <div class="modify-ctn">
+                      <button @click="toggleBarColorMode">{{ barColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                      <button @click="goToBarChart">Details</button>
+                  </div>
+                  <div  class="chart-box">
+                     <!-- <barChart 
+                        v-if="isSizeAvailable"
+                        :data="[210,100,40,50,65,40,10]" 
+                        :color-mode="barColorMode"
+                        :colors=this.$colors
+                        :size="divSize"
+                        ></barChart> -->
+                  </div>
+                 
+              </div>
+          </div>
+
+          <div class="component-ctn">
+              <div class="chart-ctn">
+                  <div class="title-box"><p>Pie Chart</p></div>
+                  <div class="modify-ctn">
                       <button @click="togglePieColorMode">{{ pieColorMode === 'day' ? 'Night' : 'Day' }}</button>
                       <button @click="goToPieChart">Details</button>
                   </div>
@@ -38,27 +80,30 @@
                         :size="divSize"
                         ></pieChart>
                   </div>
-                  
               </div>
           </div>
+          
       </div>
 
 </template>
 
 <script>
-import BarChart from '../components/barChart.vue';
-import PieChart from '../components/pieChart.vue';
+import barChart from '../components/barChart.vue';
+import pieChart from '../components/pieChart.vue';
+import roseChart from '../components/roseChart.vue';
 import { ref, onMounted } from 'vue';
 
 export default {
   components: {
-      BarChart,
-      PieChart
+      barChart,
+      pieChart,
+      roseChart
   },
   data() {
       return {
           barColorMode: 'day',
-          pieColorMode: 'day'
+          pieColorMode: 'day',
+          roseColorMode: 'day'
       };
   },
   methods: {
@@ -67,6 +112,9 @@ export default {
       },
       togglePieColorMode() {
           this.pieColorMode = this.pieColorMode === 'day' ? 'night' : 'day';
+      },
+      toggleRoseColorMode() {
+          this.roseColorMode = this.roseColorMode === 'day' ? 'night' : 'day';
       },
       goToBarChart() {
           this.$router.push('/bar-chart');
@@ -101,11 +149,12 @@ export default {
   .component-box {
       display: flex;
       justify-content: space-around;
+      margin: 1rem 0;
   }
 
   .component-ctn {
       display: flex;
-      width: 46%;
+      width: 48%;
       justify-content: center;
       border-radius: 20px;
       border: solid 1px #00000010;

@@ -199,15 +199,16 @@
          tooltip.position({
              x: rect.x() + rect.width(),
              y: rect.y()* 1.025
-         }); // 设置文本位置
+         }); 
          tooltip.show(); // 显示文本组件
+       
          extraLayer.batchDraw(); // 批量绘制图层
        }    
      });
 
      // 添加鼠标离开事件
      rect.on('mouseleave', function() {
-         tooltip.hide(); // 隐藏文本组件
+          tooltip.hide()
          // extraLayer.removeChildren();
          extraLayer.batchDraw(); // 批量绘制图层
      });

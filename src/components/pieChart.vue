@@ -54,7 +54,7 @@ export default {
     const height = props.size.height;
     const width = props.size.width;
     const radius = Math.min(height, width) / 2.5;
-    const innerRadius = Math.min(height, width) / 10;
+    const innerRadius = 0;
     const centerX = width / 2.3;
     const centerY = height / 2;
 
@@ -78,7 +78,7 @@ export default {
       }
      });
 
-     watch(() => props.colorMode, (newValue, oldValue) => {
+     watch(() => props.colorMode, (newValue) => {
         colorMode.value = newValue;
         if(colorMode.value === 'day'){
           container.value.style.backgroundColor = '#ffffff';
@@ -133,13 +133,13 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
   extraLayer.removeChildren();
 
   data.forEach((portion, index) => {
-      const gap = 1;
+      const gap = 0;
       const angle = Math.round(portion / dataSum * 360) - 1*gap;
       
       const endAngle = cumulativeAngle + angle + gap;
     
       let offset = (endAngle + 90 - 0.5 * angle) * Math.PI / 180;
-      let outerRadius = radius * Math.pow(0.9,index);
+      let outerRadius = radius ;
 
       // console.log (index , angle, cumulativeAngle, endAngle, offset);
 
@@ -149,8 +149,8 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         innerRadius: innerRadius,
         outerRadius: outerRadius,
         fill: colors[index % colors.length] + "80",
-        stroke: colors[index % colors.length],
-        strokeWidth: 2,
+        // stroke: colors[index % colors.length],
+        // strokeWidth: 2,
         angle: 0, 
         rotation: cumulativeAngle,
       });
