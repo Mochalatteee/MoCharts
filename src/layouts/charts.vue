@@ -148,7 +148,7 @@ export default {
   .component-box {
       display: flex;
       justify-content: space-around;
-      margin: 1rem 0;
+      margin: 16px 0;
   }
 
   .component-ctn {
@@ -178,7 +178,7 @@ export default {
   }
 
   .title-box{
-    margin: 0.5rem 0;
+    margin: 8px 0;
   }
 
   .chart-box{
