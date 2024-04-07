@@ -6,7 +6,7 @@
     </div>
     <div class="nav-item-box">
       <div class="nav-item">Docs</div>
-      <div class="nav-item">Gallery</div>
+      <div class="nav-item active">Gallery</div>
       <div class="nav-item">About</div>
     </div>
     
@@ -91,12 +91,16 @@ export default {
   
   .nav-item-box{
     display: flex;
+    height:100%;
     align-items: center;
   }
 
   .nav-item{
-    margin: 0.8rem;
+    height: 100%;
+    padding: 0.8rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
 
   .category-list{
@@ -115,5 +119,9 @@ export default {
     font-size: 1.1rem;
     margin: 0.8rem;
     cursor: default;
+  }
+
+  .active{
+    border-bottom: solid 3px #3c61cf;
   }
 </style>
