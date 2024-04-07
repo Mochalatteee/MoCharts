@@ -1,7 +1,7 @@
 
 <template>
 
-  <div id="app">
+  <div>
     <router-view></router-view> <!-- 路由视图占位符 -->
   </div>
 

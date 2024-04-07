@@ -72,7 +72,8 @@ export default {
   }
 
   .display-box{
-    margin-left: 6rem;
+    margin-top: 4rem;
+    margin-left: 10rem;
     padding: 1rem;
   }
 
