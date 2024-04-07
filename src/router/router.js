@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import barChart from '../components/barChart.vue';
-import Home from '../layouts/Home.vue';
+import home from '../layouts/home.vue';
 import pieChart from "../components/pieChart.vue"
 
 const routes = [{
@@ -10,7 +10,7 @@ const routes = [{
  },{
     path: '/',
     name: 'Home',
-    component: Home
+    component: home
  },{
    path: '/pie-chart',
    name: 'PieChart',

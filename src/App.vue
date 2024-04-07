@@ -1,5 +1,6 @@
 
 <template>
+
   <div id="app">
     <router-view></router-view> <!-- 路由视图占位符 -->
   </div>
@@ -10,12 +11,20 @@
 
 </script>
 
-<style scoped>
-#app{
-  width: 90vw;
-  height:90vh;
-  margin: 0;
+<style>
+* {
   padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  padding: 0;
+  margin: 0;
+}
+
+#app {
+  max-width: none !important; /* Override the max-width property */
 }
 
 </style>

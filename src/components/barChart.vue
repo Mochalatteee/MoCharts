@@ -1,9 +1,8 @@
 <template>
   <div class="modify-box">
     <!-- <div class="modify-ctn"><button @click="toggleColorMode">{{ colorMode === 'day' ? 'Night' : 'Day' }}</button></div> -->
-    <div></div>
   </div>
-  <div id="box">
+  <div>
    <div id="container" ref="container"></div>
   </div>
  </template>
@@ -30,6 +29,13 @@
     colors: {
       type: Array,
       default: () => ["#1456EB","#3BE8EB","#FBC645","#6241E7","#279AE0"]
+    },
+    size: {
+      type: Object,
+      default: () => [{
+        width: 450,
+        height: 350
+      }]
     }
   },
   
@@ -48,9 +54,10 @@
     const data = props.data;
     const dataLabel = props.dataLabel;
     const colors = props.colors;
+    const ctnHeight = props.size.height;
+    const ctnWidth = props.size.width;
 
-    const ctnHeight = 350;
-    const ctnWidth = 450;
+    // console.log(ctnHeight,ctnWidth, props.size.width);
     const barWidth = (ctnWidth / data.length - ctnWidth/50 )/ 2;
     const barSpacing = barWidth - ctnWidth/50;
     const maxHeight = ctnHeight - 100;
@@ -80,7 +87,7 @@
         if(data.length !== dataLabel.length) {
           return console.log("数据数目不匹配")
         }
-        drawAxis(xAxisLayer,currentMode,ctnHeight);
+        drawAxis(xAxisLayer,currentMode,ctnHeight,ctnWidth);
          // 初始化数据
         //   动画
          const anim = new Konva.Animation((frame) => {
@@ -99,7 +106,7 @@
       };
 
      onMounted(() => {
-       if (!container.value) {
+       if (!container.value && !ctnHeight && !ctnWidth) {
          return;
        }
        if (container.value) {
@@ -120,7 +127,6 @@
          stage.add(yAxisLayer);
          stage.add(barLayer);
          stage.add(extraLayer);
-         console.log(colorMode)
  
          redrawChart(colorMode.value, data, dataLabel);
        }
@@ -261,11 +267,12 @@
    for(let i = 0; i < 5; i++){
       
      let value = (maxData - i*(maxData/5)).toLocaleString();
-     let tempY = 0.9 * ctnHeight - maxHeight + i*(0.85 * ctnHeight - maxHeight);
+     let tempY = 0.9 * ctnHeight - maxHeight + i*(0.15 * ctnHeight);
+     console.log(i, tempY, ctnHeight,maxHeight);
 
      const axis = new Konva.Line({
        points: [0.1*ctnWidth, tempY,
-        0.9 * ctnWidth, tempY], // x 轴坐标
+        0.95 * ctnWidth, tempY], // x 轴坐标
        stroke: modeColor,
        strokeWidth: 0.5,
        dash: [5, 5],
@@ -288,10 +295,10 @@
    
  }
  
- function drawAxis(layer,colorMode,ctnHeight) {
+ function drawAxis(layer,colorMode,ctnHeight,ctnWidth) {
 
    const xAxis = new Konva.Line({
-     points: [50, 0.9 * ctnHeight, 400, 0.9 * ctnHeight], // x 轴坐标
+     points: [0.1*ctnWidth, 0.9 * ctnHeight, 0.95*ctnWidth, 0.9 * ctnHeight], // x 轴坐标
      stroke: colorMode === 'day'? '#86909C':'#D5D5D6CC',
      strokeWidth: 0.5
    });
@@ -300,7 +307,7 @@
    const xAxisText = new Konva.Text({
      x: 400, 
      y: 0.9 * ctnHeight + 10, 
-     text: 'X Axis', 
+     text: '', 
      fontSize: 12, 
      fill: colorMode === 'day'? '#86909C':'#D5D5D6CC', 
    });
@@ -330,18 +337,9 @@
 <<style scoped>
  #container{
    background-color: #ffffff;
-   border-radius: 5px;
-   border: solid 1px #00000005;
+   /* border-radius: 5px;
+   border: solid 1px #00000005; */
    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.02); */
-   padding: 10px;
- }
-
- #box{
-   display: flex;
-   align-items: flex-start;
-   justify-content: center;
-   margin:auto;
-   height: 100vh;
  }
 
  .modify-ctn{

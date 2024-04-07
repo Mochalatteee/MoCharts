@@ -34,6 +34,13 @@ export default {
     colors: {
       type: Array,
       default: () => ["#1456EB","#3BE8EB","#FBC645","#6241E7","#279AE0"]
+    },
+    size: {
+      type: Object,
+      default: () => [{
+        width: 450,
+        height: 350
+      }]
     }
   },
 
@@ -44,11 +51,11 @@ export default {
     let layer = null;
     let extraLayer = null;
 
-    const height = 350;
-    const width = 450;
+    const height = props.size.height;
+    const width = props.size.width;
     const radius = Math.min(height, width) / 2.5;
     const innerRadius = Math.min(height, width) / 10;
-    const centerX = width / 2;
+    const centerX = width / 2.3;
     const centerY = height / 2;
 
     const data = props.data; 
