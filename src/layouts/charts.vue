@@ -136,7 +136,6 @@ export default {
         divSize.value = { width, height };
         isSizeAvailable.value = true;
       }
-        console.log(isSizeAvailable, divSize);
     })
 
     return { chartBox, divSize, isSizeAvailable };

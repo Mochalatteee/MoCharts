@@ -63,6 +63,9 @@
     const maxHeight = ctnHeight - 100;
     const maxData = getMaxData(Math.max(...data));
 
+    const fontSize = Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
+    console.log(fontSize);
+
     // 监听数据变化，实现响应式
      watch(() => props.data, (newValue, oldValue) => {
       if (!container.value) {
@@ -269,7 +272,6 @@
       
      let value = (maxData - i*(maxData/5)).toLocaleString();
      let tempY = 0.9 * ctnHeight - maxHeight + i*(0.15 * ctnHeight);
-     console.log(i, tempY, ctnHeight,maxHeight);
 
      const axis = new Konva.Line({
        points: [0.1*ctnWidth, tempY,

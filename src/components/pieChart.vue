@@ -53,9 +53,9 @@ export default {
 
     const height = props.size.height;
     const width = props.size.width;
-    const radius = Math.min(height, width) / 2.5;
+    const radius = Math.min(height, width) / 3;
     const innerRadius = 0;
-    const centerX = width / 2.3;
+    const centerX = width / 2;
     const centerY = height / 2;
 
     const data = props.data; 
@@ -66,8 +66,6 @@ export default {
                     }, 0);
 
     let cumulativeAngle = -90;
-
-    console.log(colors);
 
     watch(() => props.data, (newValue, oldValue) => {
       if (!container.value) {
@@ -133,7 +131,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
   extraLayer.removeChildren();
 
   data.forEach((portion, index) => {
-      const gap = 0;
+      const gap = 1;
       const angle = Math.round(portion / dataSum * 360) - 1*gap;
       
       const endAngle = cumulativeAngle + angle + gap;
@@ -149,8 +147,8 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         innerRadius: innerRadius,
         outerRadius: outerRadius,
         fill: colors[index % colors.length] + "80",
-        // stroke: colors[index % colors.length],
-        // strokeWidth: 2,
+        stroke: colors[index % colors.length],
+        strokeWidth: 2,
         angle: 0, 
         rotation: cumulativeAngle,
       });

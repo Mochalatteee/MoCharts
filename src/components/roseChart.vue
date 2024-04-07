@@ -66,9 +66,7 @@
                       }, 0);
   
       let cumulativeAngle = -90;
-  
-      console.log(colors);
-  
+    
       watch(() => props.data, (newValue, oldValue) => {
         if (!container.value) {
           return;
