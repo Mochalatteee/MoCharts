@@ -63,9 +63,6 @@
     const maxHeight = ctnHeight - 100;
     const maxData = getMaxData(Math.max(...data));
 
-    const fontSize = Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
-    console.log(fontSize);
-
     // 监听数据变化，实现响应式
      watch(() => props.data, (newValue, oldValue) => {
       if (!container.value) {
@@ -101,11 +98,13 @@
              drawDynamicAxis(yAxisLayer, maxHeight, data, maxData,currentMode,ctnHeight,ctnWidth);
 
            } else {
+             drawBars(barLayer, data, 1000, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel, ctnHeight,ctnWidth);
              anim.stop(); // 加载完成后停止动画
            }
          }, barLayer);
  
          anim.start();
+
       };
 
      onMounted(() => {
@@ -141,12 +140,14 @@
 
  
  
- function drawBars(layer, data, elapsed, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel, ctnHeight) {
+ function drawBars(layer, data, elapsed, barWidth, barSpacing, maxHeight, colors, maxData, extraLayer,anim,dataLabel, ctnHeight, ctnWidth) {
    layer.removeChildren();
-  //  console.log(ctnHeight);
+
+   const fontSize = calculateFontSize(ctnWidth,ctnHeight);
+   
    data.forEach((value, index) => {
      const x = (index + 1.5) * (barWidth + barSpacing);
-     const height = (elapsed / 1000) * maxHeight * (value / maxData);
+     const height = (elapsed / 1000) * (0.9 * ctnHeight - 100) * (value / maxData);
  
      const rect = new Konva.Rect({
        x: x,
@@ -185,7 +186,7 @@
      tooltip.add(
        new Konva.Text({
          text: dataLabel[index] + "\n" + value,
-         fontSize: 12,
+         fontSize: fontSize,
          padding: 10,
          fill: 'white',
          width: 60,
@@ -221,6 +222,10 @@
    layer.draw(); 
  }
 
+ function calculateFontSize(ctnWidth,ctnHeight){
+    return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
+ }
+
  function getDataMagnitude(num) {
    // 使用对数运算获取数据的量级
    let magnitude = Math.floor(Math.log10(Math.abs(num)));
@@ -243,6 +248,7 @@
 
  function drawDynamicLabel(layer, dataLabel, barSpacing, barWidth, colorMode, ctnHeight, ctnWidth){
    layer.removeChildren();
+   const fontSize = calculateFontSize(ctnWidth,ctnHeight);
 
    dataLabel.forEach((value, index)=>{
      const x = (index + 1.5) * (barWidth + barSpacing);
@@ -252,7 +258,7 @@
        x: x,
        y: 0.9 * ctnHeight + 10,
        text: value,
-       fontSize: 11,
+       fontSize: fontSize * 1.1,
        align: 'left',
        width: width,
        fill: colorMode === 'day'? '#86909C':'#D5D5D6CC' // 字体颜色
@@ -267,11 +273,13 @@
  function drawDynamicAxis(layer, maxHeight, data, maxData,colorMode,ctnHeight,ctnWidth){
    layer.removeChildren();
    let modeColor = colorMode === 'day'? '#86909C':'#D5D5D6CC';
+   const fontSize = calculateFontSize(ctnWidth,ctnHeight);
+
+   const line = [5,8,10]
 
    for(let i = 0; i < 5; i++){
-      
-     let value = (maxData - i*(maxData/5)).toLocaleString();
-     let tempY = 0.9 * ctnHeight - maxHeight + i*(0.15 * ctnHeight);
+     let value = getMaxData((maxData - i*(maxData/5))).toLocaleString();
+     let tempY = 100 + i*((0.9 * ctnHeight - 100)/5);
 
      const axis = new Konva.Line({
        points: [0.1*ctnWidth, tempY,
@@ -289,8 +297,9 @@
        fill: modeColor,
        fontSize: 10,
        text: value,
-       width: 35,
+       width: 0.08*ctnWidth,
        align: 'right',
+       fontSize: fontSize*1.1
      })
 
      layer.add(axis,text);
@@ -299,6 +308,7 @@
  }
  
  function drawAxis(layer,colorMode,ctnHeight,ctnWidth) {
+  const fontSize = calculateFontSize(ctnWidth,ctnHeight);
 
    const xAxis = new Konva.Line({
      points: [0.1*ctnWidth, 0.9 * ctnHeight, 0.95*ctnWidth, 0.9 * ctnHeight], // x 轴坐标
@@ -311,7 +321,7 @@
      x: 400, 
      y: 0.9 * ctnHeight + 10, 
      text: '', 
-     fontSize: 12, 
+     fontSize: fontSize * 1.2, 
      fill: colorMode === 'day'? '#86909C':'#D5D5D6CC', 
    });
 

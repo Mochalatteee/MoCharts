@@ -86,6 +86,45 @@
             
         </div>
 
+        <div class="component-box">
+            <div class="component-ctn">
+                <div class="chart-ctn">
+                    <div class="title-box"><p >Line Chart</p></div>
+                    <div class="modify-ctn">
+                        <button @click="toggleRingColorMode">{{ ringColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToRingChart">Details</button>
+                    </div>
+                    <div  class="chart-box">
+                        <!-- <lineChart 
+                          
+
+                            ></lineChart> -->
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="component-ctn">
+                <div class="chart-ctn">
+                    <div class="title-box"><p>tbc Chart</p></div>
+                    <div class="modify-ctn">
+                        <button @click="togglePieColorMode">{{ pieColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToPieChart">Details</button>
+                    </div>
+                    <div class="chart-box">
+                        <!-- <pieChart 
+                            v-if="isSizeAvailable"
+                            :data="[50,100,40,50,65, 5, 120]" 
+                            :color-mode="pieColorMode"
+                            :colors=this.$colors
+                            :size="divSize"
+                            ></pieChart> -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
     </div>
 </template>
 
@@ -94,6 +133,7 @@ import barChart from '../components/barChart.vue';
 import pieChart from '../components/pieChart.vue';
 import roseChart from '../components/roseChart.vue';
 import ringChart from '../components/ringChart.vue';
+import lineChart from '../components/lineChart.vue';
 import { ref, onMounted } from 'vue';
 
 export default {
@@ -101,7 +141,8 @@ export default {
       barChart,
       pieChart,
       roseChart,
-      ringChart
+      ringChart,
+      lineChart
   },
   data() {
       return {
@@ -190,6 +231,7 @@ export default {
 
   .title-box{
     margin: 8px 0;
+    font-size: 1.5vw;
   }
 
   .chart-box{

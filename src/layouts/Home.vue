@@ -87,7 +87,7 @@ export default {
       top: 0;
       left: 0;
       width: 100vw;
-      height: 64px;
+      height: 8vh;
       background-color: white;
       border-bottom: solid 1px #eaeaea;
       display: flex;
@@ -103,17 +103,17 @@ export default {
 
   .category-box{
     position: fixed;
-    top: 64px;
+    top: 8vh;
     left: 0;
     background-color: white;
-    width: 160px;
+    width: 12vw;
     border-right: solid 1px #eaeaea;
     height: 100vh;
   }
 
   .display-box{
-    margin-top: 64px;
-    margin-left: 160px;
+    margin-top: 8vh;
+    margin-left: 12vw;
     padding: 16px;
   }
 
@@ -126,7 +126,7 @@ export default {
   }
 
   .website-title{
-    font-size: 20px;
+    font-size: 1.5vw;
     color: #3c61cf;
     margin: 8px;
   }
@@ -135,6 +135,7 @@ export default {
     display: flex;
     height:100%;
     align-items: center;
+    font-size: 1vw;
   }
 
   .nav-item{
@@ -158,10 +159,11 @@ export default {
   .category-item{
     margin: 13px;
     cursor: pointer;
+    font-size: 1vw;
   }
 
   .category-item-title{
-    font-size: 18px;
+    font-size: 1.2vw;
     margin: 13px;
     cursor: default;
   }

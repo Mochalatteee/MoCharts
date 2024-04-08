@@ -64,7 +64,8 @@
       const dataSum = data.reduce((accumulator, currentValue) => {
                         return accumulator + currentValue;
                       }, 0);
-  
+      const fontSize = calculateFontSize(width, height);
+
       let cumulativeAngle = -90;
     
       watch(() => props.data, (newValue, oldValue) => {
@@ -72,7 +73,7 @@
           return;
         }
         if (newValue !== oldValue) {
-          drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, newValue, dataLabel,dataSum, cumulativeAngle,colorMode);
+          drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, newValue, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize);
         }
        });
   
@@ -83,7 +84,7 @@
           }else{
             container.value.style.backgroundColor = '#061936';
           }
-          drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value);
+          drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value, fontSize);
         });
   
       onMounted(() => {
@@ -102,7 +103,7 @@
         stage.add(layer);
         stage.add(extraLayer);
         
-        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode)
+        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize)
       
       });
   
@@ -125,7 +126,7 @@
     }
   };
   
-  function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode){
+  function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize){
     layer.removeChildren();
     extraLayer.removeChildren();
   
@@ -180,14 +181,14 @@
           align: offset > Math.PI ? 'right' : 'left',
           padding: 5, 
           fill: colorMode.value === 'day'? '#86909C':'#D5D5D6CC', 
-          fontSize: 12,
+          fontSize: fontSize * 1.2,
         });
   
         var hintMes = new Konva.Text({
           text: dataLabel[index] + "\n" + (data[index]/dataSum * 100).toFixed(2) + "%", 
           x: offset >  Math.PI ? outerX - 20: outerX + 20,
           y: outerY ,
-          fontSize: 12,
+          fontSize: fontSize * 1.2,
           align: offset > Math.PI ? 'right' : 'left',
           lineHeight: 1.2,
           padding: 5, 
@@ -262,6 +263,10 @@
       extraLayer.draw();  
       layer.draw();
   }
+
+  function calculateFontSize(ctnWidth,ctnHeight){
+    return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
+}
   </script>
   
   <style>

@@ -53,7 +53,7 @@ export default {
     const height = props.size.height;
     const width = props.size.width;
     const radius = Math.min(height, width) / 3;
-    const innerRadius = radius - 20;
+    const innerRadius = radius - 0.15 * radius;
     const centerX = width / 2;
     const centerY = height / 2;
 
@@ -63,6 +63,7 @@ export default {
     const dataSum = data.reduce((accumulator, currentValue) => {
                       return accumulator + currentValue;
                     }, 0);
+    const fontSize =  calculateFontSize(width,height);
 
     let cumulativeAngle = -90;
 
@@ -71,7 +72,7 @@ export default {
         return;
       }
       if (newValue !== oldValue) {
-        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, newValue, dataLabel,dataSum, cumulativeAngle,colorMode);
+        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, newValue, dataLabel,dataSum, cumulativeAngle,colorMode, fontSize);
       }
      });
 
@@ -82,7 +83,7 @@ export default {
         }else{
           container.value.style.backgroundColor = '#061936';
         }
-        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value);
+        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value, fontSize);
       });
 
     onMounted(() => {
@@ -101,7 +102,7 @@ export default {
       stage.add(layer);
       stage.add(extraLayer);
       
-      drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode)
+      drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode, fontSize)
     
     });
 
@@ -124,7 +125,7 @@ export default {
   }
 };
 
-function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode){
+function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize){
   layer.removeChildren();
   extraLayer.removeChildren();
 
@@ -168,20 +169,20 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         // opacity: 0,
         text: data[index], 
         x: centerX - innerRadius,
-        y: centerY + 30,
+        y: centerY + fontSize * 3,
         width: innerRadius * 2,
         align: 'center',
         padding: 5, 
         fill: colorMode.value === 'day'? '#86909C':'#D5D5D6CC', 
-        fontSize: 14,
+        fontSize: fontSize* 1.2,
       });
 
       var hintMes = new Konva.Text({
         text: dataLabel[index] + "\n", 
         x: centerX - innerRadius,
-        y: centerY + 10,
+        y: centerY + fontSize * 1.25,
         width: innerRadius * 2,
-        fontSize: 14,
+        fontSize: fontSize* 1.2,
         align: 'center',
         lineHeight: 1.2,
         padding: 5, 
@@ -193,9 +194,9 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       var hintNum = new Konva.Text({
         text: num + "%",
         x: centerX - innerRadius,
-        y: centerY - 20 ,
+        y: centerY - fontSize * 2 ,
         width: innerRadius * 2,
-        fontSize: 30,
+        fontSize: fontSize * 2.5,
         align: 'center',
         fontWeight: 'bold',
         fill: colors[index % colors.length],
@@ -264,6 +265,11 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
     extraLayer.draw();  
     layer.draw();
 }
+
+function calculateFontSize(ctnWidth,ctnHeight){
+    return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
+}
+
 </script>
 
 <style>

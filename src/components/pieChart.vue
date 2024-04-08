@@ -64,6 +64,7 @@ export default {
     const dataSum = data.reduce((accumulator, currentValue) => {
                       return accumulator + currentValue;
                     }, 0);
+    const fontSize =  calculateFontSize(width,height);
 
     let cumulativeAngle = -90;
 
@@ -72,7 +73,7 @@ export default {
         return;
       }
       if (newValue !== oldValue) {
-        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, newValue, dataLabel,dataSum, cumulativeAngle,colorMode);
+        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, newValue, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize);
       }
      });
 
@@ -83,7 +84,7 @@ export default {
         }else{
           container.value.style.backgroundColor = '#061936';
         }
-        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value);
+        drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value,fontSize);
       });
 
     onMounted(() => {
@@ -102,7 +103,7 @@ export default {
       stage.add(layer);
       stage.add(extraLayer);
       
-      drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode)
+      drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize)
     
     });
 
@@ -125,7 +126,7 @@ export default {
   }
 };
 
-function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode){
+function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,colorMode,fontSize){
   layer.removeChildren();
   extraLayer.removeChildren();
 
@@ -186,14 +187,14 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         align: offset > Math.PI ? 'right' : 'left',
         padding: 5, 
         fill: colorMode.value === 'day'? '#86909C':'#D5D5D6CC', 
-        fontSize: 12,
+        fontSize: fontSize*1.2,
       });
 
       var hintMes = new Konva.Text({
         text: dataLabel[index] + "\n" + (data[index]/dataSum * 100).toFixed(2) + "%", 
         x: offset >  Math.PI ? outerX - 20: outerX + 20,
         y: outerY ,
-        fontSize: 12,
+        fontSize: fontSize*1.2,
         align: offset > Math.PI ? 'right' : 'left',
         lineHeight: 1.2,
         padding: 5, 
@@ -267,6 +268,10 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
 
     extraLayer.draw();  
     layer.draw();
+}
+
+function calculateFontSize(ctnWidth,ctnHeight){
+    return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
 }
 </script>
 
