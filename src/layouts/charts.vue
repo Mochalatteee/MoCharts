@@ -1,90 +1,92 @@
 <template>
-     
-      <div class="component-box">
-          <div class="component-ctn">
-              <div class="chart-ctn">
-                  <div class="title-box"><p >Bar Chart</p></div>
+     <div class="charts">
 
-                  <div class="modify-ctn">
-                      <button @click="toggleBarColorMode">{{ barColorMode === 'day' ? 'Night' : 'Day' }}</button>
-                      <button @click="goToBarChart">Details</button>
-                  </div>
-                  <div ref="chartBox" class="chart-box">
-                     <barChart 
-                        v-if="isSizeAvailable"
-                        :data="[210,100,40,50,65,40,10]" 
-                        :color-mode="barColorMode"
-                        :colors=this.$colors
-                        :size="divSize"
-                        ></barChart>
-                  </div>
-                 
-              </div>
-          </div>
+        <div class="component-box">
+            <div class="component-ctn">
+                <div class="chart-ctn">
+                    <div class="title-box"><p >Bar Chart</p></div>
 
-          <div class="component-ctn">
-              <div class="chart-ctn">
-                  <div class="title-box"><p>Rose Chart</p></div>
-                  <div class="modify-ctn">
-                      <button @click="togglePieColorMode">{{ roseColorMode === 'day' ? 'Night' : 'Day' }}</button>
-                      <button @click="goToPieChart">Details</button>
-                  </div>
-                  <div class="chart-box">
-                    <roseChart 
-                        v-if="isSizeAvailable"
-                        :data="[50,100,40,50,65, 5, 120]" 
-                        :color-mode="pieColorMode"
-                        :colors=this.$colors
-                        :size="divSize"
-                        ></roseChart>
-                  </div>
-              </div>
-          </div>
+                    <div class="modify-ctn">
+                        <button @click="toggleBarColorMode">{{ barColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToBarChart">Details</button>
+                    </div>
+                    <div ref="chartBox" class="chart-box">
+                        <barChart 
+                            v-if="isSizeAvailable"
+                            :data="[210,100,40,50,65,40,10]" 
+                            :color-mode="barColorMode"
+                            :colors=this.$colors
+                            :size="divSize"
+                            ></barChart>
+                    </div>
+                    
+                </div>
+            </div>
 
-      </div>
+            <div class="component-ctn">
+                <div class="chart-ctn">
+                    <div class="title-box"><p>Rose Chart</p></div>
+                    <div class="modify-ctn">
+                        <button @click="toggleRoseColorMode">{{ roseColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToPieChart">Details</button>
+                    </div>
+                    <div class="chart-box">
+                        <roseChart 
+                            v-if="isSizeAvailable"
+                            :data="[50,100,40,50,65, 5, 120]" 
+                            :color-mode="roseColorMode"
+                            :colors=this.$colors
+                            :size="divSize"
+                            ></roseChart>
+                    </div>
+                </div>
+            </div>
 
-      <div class="component-box">
-          <div class="component-ctn">
-              <div class="chart-ctn">
-                  <div class="title-box"><p >Line Chart</p></div>
-                  <div class="modify-ctn">
-                      <button @click="toggleBarColorMode">{{ barColorMode === 'day' ? 'Night' : 'Day' }}</button>
-                      <button @click="goToBarChart">Details</button>
-                  </div>
-                  <div  class="chart-box">
-                     <!-- <barChart 
-                        v-if="isSizeAvailable"
-                        :data="[210,100,40,50,65,40,10]" 
-                        :color-mode="barColorMode"
-                        :colors=this.$colors
-                        :size="divSize"
-                        ></barChart> -->
-                  </div>
-                 
-              </div>
-          </div>
+        </div>
 
-          <div class="component-ctn">
-              <div class="chart-ctn">
-                  <div class="title-box"><p>Pie Chart</p></div>
-                  <div class="modify-ctn">
-                      <button @click="togglePieColorMode">{{ pieColorMode === 'day' ? 'Night' : 'Day' }}</button>
-                      <button @click="goToPieChart">Details</button>
-                  </div>
-                  <div class="chart-box">
-                    <pieChart 
-                        v-if="isSizeAvailable"
-                        :data="[50,100,40,50,65, 5, 120]" 
-                        :color-mode="pieColorMode"
-                        :colors=this.$colors
-                        :size="divSize"
-                        ></pieChart>
-                  </div>
-              </div>
-          </div>
-          
-      </div>
+        <div class="component-box">
+            <div class="component-ctn">
+                <div class="chart-ctn">
+                    <div class="title-box"><p >Line Chart</p></div>
+                    <div class="modify-ctn">
+                        <button @click="toggleBarColorMode">{{ barColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToBarChart">Details</button>
+                    </div>
+                    <div  class="chart-box">
+                        <!-- <barChart 
+                            v-if="isSizeAvailable"
+                            :data="[210,100,40,50,65,40,10]" 
+                            :color-mode="barColorMode"
+                            :colors=this.$colors
+                            :size="divSize"
+                            ></barChart> -->
+                    </div>
+                    
+                </div>
+            </div>
 
+            <div class="component-ctn">
+                <div class="chart-ctn">
+                    <div class="title-box"><p>Pie Chart</p></div>
+                    <div class="modify-ctn">
+                        <button @click="togglePieColorMode">{{ pieColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToPieChart">Details</button>
+                    </div>
+                    <div class="chart-box">
+                        <pieChart 
+                            v-if="isSizeAvailable"
+                            :data="[50,100,40,50,65, 5, 120]" 
+                            :color-mode="pieColorMode"
+                            :colors=this.$colors
+                            :size="divSize"
+                            ></pieChart>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+    </div>
 </template>
 
 <script>

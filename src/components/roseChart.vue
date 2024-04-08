@@ -83,7 +83,6 @@
           }else{
             container.value.style.backgroundColor = '#061936';
           }
-          console.log(colorMode.value);
           drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value);
         });
   

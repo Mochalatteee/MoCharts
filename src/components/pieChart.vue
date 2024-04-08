@@ -83,7 +83,6 @@ export default {
         }else{
           container.value.style.backgroundColor = '#061936';
         }
-        console.log(colorMode.value);
         drawPieChart(layer, extraLayer, radius, innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle, colorMode.value);
       });
 
@@ -122,7 +121,7 @@ export default {
       //   drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, colors, data, dataLabel,dataSum, cumulativeAngle,currentMode)
       };
 
-    return { container , toggleColorMode}
+    return { container , toggleColorMode }
   }
 };
 
@@ -131,15 +130,20 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
   extraLayer.removeChildren();
 
   data.forEach((portion, index) => {
-      const gap = 1;
-      const angle = Math.round(portion / dataSum * 360) - 1*gap;
+      const gap = 0.1;
+      const angle = Math.round(portion / dataSum * 360) - 2*gap;
+      let endAngle = 0;
       
-      const endAngle = cumulativeAngle + angle + gap;
+      if (index === data.length - 1) {
+        endAngle = 270;
+      } else{
+        endAngle = cumulativeAngle + angle + 2*gap;
+      } 
     
       let offset = (endAngle + 90 - 0.5 * angle) * Math.PI / 180;
       let outerRadius = radius ;
 
-      // console.log (index , angle, cumulativeAngle, endAngle, offset);
+      // console.log (index , angle, cumulativeAngle, endAngle+90);
 
       const wedge = new Konva.Arc({
         x: centerX ,
@@ -151,6 +155,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         strokeWidth: 2,
         angle: 0, 
         rotation: cumulativeAngle,
+        closed: true,
       });
 
       layer.add(wedge);

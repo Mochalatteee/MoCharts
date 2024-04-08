@@ -5,9 +5,9 @@
         <p class="website-title">MOCHARTS</p>
     </div>
     <div class="nav-item-box">
-      <div class="nav-item">Docs</div>
-      <div class="nav-item active">Gallery</div>
-      <div class="nav-item">About</div>
+      <router-link to="/docs" class="nav-item" :class="{ 'active': currentRoute === '/docs' }">Docs</router-link>
+      <router-link to="/gallery" class="nav-item" :class="{ 'active': currentRoute === '/gallery' }">Gallery</router-link>
+      <router-link to="/about" class="nav-item" :class="{ 'active': currentRoute === '/about' }">About</router-link>
     </div>
     
   </div>
@@ -22,7 +22,14 @@
     </div>
 
     <div class="display-box">
-      <charts></charts>
+      <div class="">
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in" appear>
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
+
     </div>
 
   </div>
@@ -32,13 +39,45 @@
 
 <script>
 import charts from './charts.vue';
+import { ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 
 export default {
   components: {
     charts
+  },
+  setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const currentRoute = ref(route.path);
+    const isTransitioning = ref(false);
+    const navItems = [
+      { path: '/docs', label: 'Docs' },
+      { path: '/gallery', label: 'Gallery' },
+      { path: '/about', label: 'About' }
+    ];
+
+    const goto = (path) => {
+      if (!isTransitioning.value) {
+        isTransitioning.value = true;
+        router.push(path);
+      }
+    };
+
+    watch(() => route.path, (newValue) => {
+      currentRoute.value = newValue;
+      isTransitioning.value = false;
+    });
+
+    return {
+      currentRoute,
+      navItems,
+      goto
+    };
   }
 };
+
 </script>
 
 <style scoped>
@@ -58,7 +97,7 @@ export default {
   }
 
   .body-box{
-    width: 95vw;
+    width: 100vw;
   }
 
   .category-box{
@@ -100,9 +139,12 @@ export default {
   .nav-item{
     height: 100%;
     padding: 13px;
+    text-decoration: none;
+    color: #454545;
     cursor: pointer;
     display: flex;
     align-items: center;
+    transition: border-bottom-color 0.3s ease;
   }
 
   .category-list{
@@ -126,4 +168,15 @@ export default {
   .active{
     border-bottom: solid 3px #3c61cf;
   }
+  
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
+  .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+    opacity: 0;
+  }
+  .fade-enter{
+    opacity: 1;
+  }
+
 </style>
