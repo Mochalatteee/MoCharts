@@ -180,7 +180,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       var hintMes = new Konva.Text({
         text: dataLabel[index] + "\n", 
         x: centerX - innerRadius,
-        y: centerY + fontSize * 1.25,
+        y: centerY + fontSize * 1,
         width: innerRadius * 2,
         fontSize: fontSize* 1.2,
         align: 'center',
@@ -192,19 +192,30 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       var num = (data[index]/dataSum * 100).toFixed(2);
 
       var hintNum = new Konva.Text({
-        text: num + "%",
+        text: num + "",
         x: centerX - innerRadius,
         y: centerY - fontSize * 2 ,
         width: innerRadius * 2,
-        fontSize: fontSize * 2.5,
+        fontSize: fontSize * 3,
         align: 'center',
         fontWeight: 'bold',
         fill: colors[index % colors.length],
       })
 
+      var length = num.toString().length;
+
+      var hintPer = new Konva.Text({
+        text:"%",
+        x: hintNum.x() + hintNum.width() / 2  + length / 2 * 0.55* hintNum.fontSize(),
+        y: hintNum.y(),
+        fill: colors[index % colors.length],
+        fontSize: fontSize * 1.2,
+      })
+
       group.add(hintData);
       group.add(hintMes);
       group.add(hintNum);
+      group.add(hintPer);
       group.opacity(0);
       extraLayer.add(group);
 
