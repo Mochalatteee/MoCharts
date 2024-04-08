@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import barChart from '../components/barChart.vue';
 import home from '../layouts/home.vue';
 import pieChart from "../components/pieChart.vue"
-import charts from '../layouts/charts.vue';
+import gallery from '../layouts/gallery.vue';
 import docs from '../layouts/docs.vue';
 import about from '../layouts/about.vue'
 
@@ -17,7 +17,7 @@ const homeRoutes = [{
 },{
    path: '/gallery',
    name: 'gallery',
-   component: charts,
+   component: gallery,
    meta: {
       index: 2
     }

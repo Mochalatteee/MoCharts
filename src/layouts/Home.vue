@@ -20,7 +20,7 @@
         <div class="category-item">Line</div>
       </div>
     </div>
-
+  
     <div class="display-box">
       <div class="">
         <router-view v-slot="{ Component }">
@@ -29,8 +29,9 @@
           </transition>
         </router-view>
       </div>
-
     </div>
+
+   
 
   </div>
   
@@ -38,7 +39,7 @@
 </template>
 
 <script>
-import charts from './charts.vue';
+import charts from './gallery.vue';
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -170,12 +171,17 @@ export default {
   }
   
   .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s;
   }
-  .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+
+  .fade-enter,
+  .fade-leave-to,
+  .before-enter {
     opacity: 0;
   }
-  .fade-enter{
+
+  .fade-enter-to,
+  .fade-leave {
     opacity: 1;
   }
 

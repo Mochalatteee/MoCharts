@@ -47,19 +47,19 @@
         <div class="component-box">
             <div class="component-ctn">
                 <div class="chart-ctn">
-                    <div class="title-box"><p >Line Chart</p></div>
+                    <div class="title-box"><p >Ring Chart</p></div>
                     <div class="modify-ctn">
-                        <button @click="toggleBarColorMode">{{ barColorMode === 'day' ? 'Night' : 'Day' }}</button>
-                        <button @click="goToBarChart">Details</button>
+                        <button @click="toggleRingColorMode">{{ ringColorMode === 'day' ? 'Night' : 'Day' }}</button>
+                        <button @click="goToRingChart">Details</button>
                     </div>
                     <div  class="chart-box">
-                        <!-- <barChart 
+                        <ringChart 
                             v-if="isSizeAvailable"
                             :data="[210,100,40,50,65,40,10]" 
-                            :color-mode="barColorMode"
+                            :color-mode="ringColorMode"
                             :colors=this.$colors
                             :size="divSize"
-                            ></barChart> -->
+                            ></ringChart>
                     </div>
                     
                 </div>
@@ -93,19 +93,22 @@
 import barChart from '../components/barChart.vue';
 import pieChart from '../components/pieChart.vue';
 import roseChart from '../components/roseChart.vue';
+import ringChart from '../components/ringChart.vue';
 import { ref, onMounted } from 'vue';
 
 export default {
   components: {
       barChart,
       pieChart,
-      roseChart
+      roseChart,
+      ringChart
   },
   data() {
       return {
           barColorMode: 'day',
           pieColorMode: 'day',
-          roseColorMode: 'day'
+          roseColorMode: 'day',
+          ringColorMode: 'day'
       };
   },
   methods: {
@@ -118,11 +121,17 @@ export default {
       toggleRoseColorMode() {
           this.roseColorMode = this.roseColorMode === 'day' ? 'night' : 'day';
       },
+      toggleRingColorMode() {
+          this.ringColorMode = this.ringColorMode === 'day' ? 'night' : 'day';
+      },
       goToBarChart() {
           this.$router.push('/bar-chart');
       },
       goToPieChart() {
           this.$router.push('/pie-chart');
+      },
+      goToRingChart() {
+          this.$router.push('/ring-chart');
       }
   },
   setup() {

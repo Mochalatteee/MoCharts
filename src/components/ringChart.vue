@@ -1,7 +1,6 @@
 <template>
   <div class="modify-box">
-    <!-- <div><p>南丁格尔玫瑰图示例</p></div>
-    <button @click="toggleColorMode">切换颜色模式</button> -->
+    <!-- <button @click="toggleColorMode">切换颜色模式</button> -->
 
   </div>
   <div id="box">
@@ -54,7 +53,7 @@ export default {
     const height = props.size.height;
     const width = props.size.width;
     const radius = Math.min(height, width) / 3;
-    const innerRadius = 0;
+    const innerRadius = radius - 20;
     const centerX = width / 2;
     const centerY = height / 2;
 
@@ -130,12 +129,12 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
   extraLayer.removeChildren();
 
   data.forEach((portion, index) => {
-      const gap = 0.1;
+      const gap = 1;
       const angle = Math.round(portion / dataSum * 360) - 2*gap;
       let endAngle = 0;
       
       if (index === data.length - 1) {
-        endAngle = 270.5;
+        endAngle = 270;
       } else{
         endAngle = cumulativeAngle + angle + 2*gap;
       } 
@@ -154,6 +153,8 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         stroke: colors[index % colors.length],
         strokeWidth: 2,
         angle: 0, 
+        lineJoin: 'round',
+        lineCap: 'round',
         rotation: cumulativeAngle,
         closed: true,
       });
@@ -163,51 +164,46 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       //hover： additional information
       var group = new Konva.Group();
 
-      let innerX = centerX + outerRadius * Math.sin(offset);
-      let innerY = centerY - outerRadius * Math.cos(offset);
-      let outerX = centerX + (outerRadius + 25) * Math.sin(offset);
-      let outerY = centerY - (outerRadius + 25) * Math.cos(offset);
-      
-      var tooltip = new Konva.Line({
-        // opacity: 0,
-        points: [innerX, innerY, outerX, outerY,
-        offset >  Math.PI ? outerX - 20: outerX + 20, outerY,],
-        stroke: colors[index % colors.length],
-        strokeWidth: 1,
-        lineCap: 'round',
-        lineJoin: 'round'
-      });
-
       var hintData = new Konva.Text({ 
         // opacity: 0,
         text: data[index], 
-        x: offset >  Math.PI ? outerX - 20: outerX + 20,
-        y: outerY - 15,
-        align: offset > Math.PI ? 'right' : 'left',
+        x: centerX - innerRadius,
+        y: centerY + 30,
+        width: innerRadius * 2,
+        align: 'center',
         padding: 5, 
         fill: colorMode.value === 'day'? '#86909C':'#D5D5D6CC', 
-        fontSize: 12,
+        fontSize: 14,
       });
 
       var hintMes = new Konva.Text({
-        text: dataLabel[index] + "\n" + (data[index]/dataSum * 100).toFixed(2) + "%", 
-        x: offset >  Math.PI ? outerX - 20: outerX + 20,
-        y: outerY ,
-        fontSize: 12,
-        align: offset > Math.PI ? 'right' : 'left',
+        text: dataLabel[index] + "\n", 
+        x: centerX - innerRadius,
+        y: centerY + 10,
+        width: innerRadius * 2,
+        fontSize: 14,
+        align: 'center',
         lineHeight: 1.2,
         padding: 5, 
         fill: colors[index % colors.length],
       })
 
-      if(offset > Math.PI){
-        hintData.x( outerX - 20 - hintData.width());
-        hintMes.x(outerX - 20 - hintMes.width())
-      }
+      var num = (data[index]/dataSum * 100).toFixed(2);
 
-      group.add(tooltip);
+      var hintNum = new Konva.Text({
+        text: num + "%",
+        x: centerX - innerRadius,
+        y: centerY - 20 ,
+        width: innerRadius * 2,
+        fontSize: 30,
+        align: 'center',
+        fontWeight: 'bold',
+        fill: colors[index % colors.length],
+      })
+
       group.add(hintData);
       group.add(hintMes);
+      group.add(hintNum);
       group.opacity(0);
       extraLayer.add(group);
 
@@ -218,8 +214,8 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
           wedge.angle(currentAngle); // 设置角度
           
         } else {
-          const finalAngle = angle;
-          wedge.angle(finalAngle); 
+          const finalAngle = angle; // 设置最终的角度
+          wedge.angle(finalAngle); // 在动画结束时手动设置角度
           anim.stop(); // 加载完成后停止动画
         }
       }, layer);

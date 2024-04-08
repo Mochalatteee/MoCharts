@@ -130,7 +130,7 @@
     extraLayer.removeChildren();
   
     data.forEach((portion, index) => {
-        const gap = 1;
+        const gap = 1.2;
         const angle = Math.round(portion / dataSum * 360) - 1*gap;
         
         const endAngle = cumulativeAngle + angle + gap;
@@ -212,6 +212,8 @@
             wedge.angle(currentAngle); // 设置角度
             
           } else {
+            const finalAngle = angle;
+            wedge.angle(finalAngle); 
             anim.stop(); // 加载完成后停止动画
           }
         }, layer);
