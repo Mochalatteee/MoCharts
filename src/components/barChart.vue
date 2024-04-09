@@ -275,7 +275,7 @@
    let modeColor = colorMode === 'day'? '#86909C':'#D5D5D6CC';
    const fontSize = calculateFontSize(ctnWidth,ctnHeight);
 
-   const line = Math.floor(ctnHeight * 0.01);
+   const line = Math.floor(ctnHeight * 0.01) + 1;
 
    for(let i = 0; i < line; i++){
      let tempvalue = Math.floor(maxData - i*(maxData/line));
