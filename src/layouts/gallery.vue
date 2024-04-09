@@ -13,7 +13,7 @@
                     <div ref="chartBox" class="chart-box">
                         <barChart 
                             v-if="isSizeAvailable"
-                            :data="[210,100,40,50,65,40,10]" 
+                            :data="[215,105,40,50,65,40,10]" 
                             :color-mode="barColorMode"
                             :colors=this.$colors
                             :size="divSize"

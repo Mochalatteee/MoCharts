@@ -275,11 +275,14 @@
    let modeColor = colorMode === 'day'? '#86909C':'#D5D5D6CC';
    const fontSize = calculateFontSize(ctnWidth,ctnHeight);
 
-   const line = [5,8,10]
+   const line = Math.floor(ctnHeight * 0.01);
 
-   for(let i = 0; i < 5; i++){
-     let value = getMaxData((maxData - i*(maxData/5))).toLocaleString();
-     let tempY = 100 + i*((0.9 * ctnHeight - 100)/5);
+   for(let i = 0; i < line; i++){
+     let tempvalue = Math.floor(maxData - i*(maxData/line));
+     console.log(tempvalue,line,ctnHeight);
+
+     let value = (Math.round(tempvalue / 5 ) * 5).toLocaleString();
+     let tempY = 100 + i*((0.9 * ctnHeight - 100)/line);
 
      const axis = new Konva.Line({
        points: [0.1*ctnWidth, tempY,

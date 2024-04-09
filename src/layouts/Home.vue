@@ -24,7 +24,7 @@
     <div class="display-box">
       <div class="">
         <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in" appear>
+          <transition name="fade" mode="out-in" appear="">
             <component :is="Component" />
           </transition>
         </router-view>
@@ -170,21 +170,28 @@ export default {
 
   .active{
     border-bottom: solid 3px #3c61cf;
-  }
-  
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.2s;
+    transition: border-bottom-color 0.3s ease;
   }
 
-  .fade-enter,
-  .fade-leave-to,
-  .before-enter {
-    opacity: 0;
+  .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 0.2s;
+    }
+
+
+    .fade-leave-to,
+    .before-enter {
+      opacity: 0;
+    }
+
+    .fade-enter-from {
+    opacity: 0 ; /* 设置进入时的初始状态为完全透明 */
   }
 
-  .fade-enter-to,
-  .fade-leave {
-    opacity: 1;
-  }
+    .fade-enter-to,
+    .fade-leave {
+      opacity: 1;
+    }
+
 
 </style>
