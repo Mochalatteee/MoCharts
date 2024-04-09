@@ -17,7 +17,7 @@ export default {
   props: {
     data: {
       type: Array,
-      default: () => [60, 40, 20, 10, 100, 40, 80, 30]
+      default: () => [60, 40, 25, 10, 100, 40, 80, 30]
     },
     dataLabel: {
       type: Array,
@@ -53,7 +53,7 @@ export default {
 
     const height = props.size.height;
     const width = props.size.width;
-    const radius = Math.min(height, width) / 3;
+    const radius = Math.min(height, width) / 3.25;
     const innerRadius = 0;
     const centerX = width / 2;
     const centerY = height / 2;
@@ -138,11 +138,12 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       if (index === data.length - 1) {
         endAngle = 270.5;
       } else{
-        endAngle = cumulativeAngle + angle + 2*gap;
+        endAngle = cumulativeAngle + angle + 2 * gap;
       } 
     
       let offset = (endAngle + 90 - 0.5 * angle) * Math.PI / 180;
       let outerRadius = radius ;
+      const stroke = Math.round(centerY * 2 * 0.004);
 
       // console.log (index , angle, cumulativeAngle, endAngle+90);
 
@@ -153,7 +154,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         outerRadius: outerRadius,
         fill: colors[index % colors.length] + "80",
         stroke: colors[index % colors.length],
-        strokeWidth: 2,
+        strokeWidth: stroke,
         angle: 0, 
         rotation: cumulativeAngle,
         closed: true,
@@ -166,15 +167,15 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
 
       let innerX = centerX + outerRadius * Math.sin(offset);
       let innerY = centerY - outerRadius * Math.cos(offset);
-      let outerX = centerX + (outerRadius + 25) * Math.sin(offset);
-      let outerY = centerY - (outerRadius + 25) * Math.cos(offset);
+      let outerX = centerX + (outerRadius*1.2) * Math.sin(offset);
+      let outerY = centerY - (outerRadius*1.2) * Math.cos(offset);
       
       var tooltip = new Konva.Line({
         // opacity: 0,
         points: [innerX, innerY, outerX, outerY,
-        offset >  Math.PI ? outerX - 20: outerX + 20, outerY,],
+        offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX, outerY,],
         stroke: colors[index % colors.length],
-        strokeWidth: 1,
+        strokeWidth: stroke - 1,
         lineCap: 'round',
         lineJoin: 'round'
       });
@@ -182,7 +183,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       var hintData = new Konva.Text({ 
         // opacity: 0,
         text: data[index], 
-        x: offset >  Math.PI ? outerX - 20: outerX + 20,
+        x: offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX,
         y: outerY - fontSize * 1.7 ,
         align: offset > Math.PI ? 'right' : 'left',
         padding: 5, 
@@ -192,7 +193,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
 
       var hintMes = new Konva.Text({
         text: dataLabel[index] + "\n" + (data[index]/dataSum * 100).toFixed(2) + "%", 
-        x: offset >  Math.PI ? outerX - 20: outerX + 20,
+        x: offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX,
         y: outerY - fontSize * 0.1,
         fontSize: fontSize * 1.2,
         align: offset > Math.PI ? 'right' : 'left',
@@ -202,8 +203,8 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       })
 
       if(offset > Math.PI){
-        hintData.x( outerX - 20 - hintData.width());
-        hintMes.x(outerX - 20 - hintMes.width())
+        hintData.x( outerX - 0.1* centerX - hintData.width());
+        hintMes.x(outerX - 0.1* centerX - hintMes.width())
       }
 
       group.add(tooltip);

@@ -237,6 +237,7 @@ function drawBars(
   layer.removeChildren();
 
   const fontSize = calculateFontSize(ctnWidth, ctnHeight);
+  const stroke = Math.round(ctnHeight * 0.004);
 
   data.forEach((value, index) => {
     const x = (index + 1.5) * (barWidth + barSpacing);
@@ -251,10 +252,9 @@ function drawBars(
       cornerRadius: [10, 10, 0, 0],
       fill: colors[index % colors.length] + "80",
       stroke: colors[index % colors.length],
-      strokeWidth: 2,
+      strokeWidth: stroke,
       draggable: true,
     });
-    console.log("rect",index,rect.x())
 
     layer.add(rect);
     // 创建文本组件
@@ -358,7 +358,7 @@ function drawDynamicLabel(
 
     const text = new Konva.Text({
       x: x,
-      y: 0.9 * ctnHeight + 10,
+      y: 0.9 * ctnHeight + fontSize * 1.1,
       text: value,
       fontSize: fontSize * 1.1,
       align: "left",
@@ -366,7 +366,6 @@ function drawDynamicLabel(
       wrap: 'word',
       fill: colorMode === "day" ? "#86909C" : "#D5D5D6CC", // 字体颜色
     });
-    console.log("label",index, text.x(),text.y(),text.width())
 
     layer.add(text);
   });
@@ -385,7 +384,7 @@ function drawDynamicAxis(
   let modeColor = colorMode === "day" ? "#86909C" : "#D5D5D6CC";
   const fontSize = calculateFontSize(ctnWidth, ctnHeight);
 
-  const line = Math.floor(ctnHeight * 0.01) + 1;
+  const line = Math.min(Math.max(Math.floor(ctnHeight * 0.01) + 1, 5), 10);
 
   for (let i = 0; i < line; i++) {
     let tempvalue = Math.floor(maxData - i * (maxData / line));

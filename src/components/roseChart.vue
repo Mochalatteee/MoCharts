@@ -17,7 +17,7 @@
     props: {
       data: {
         type: Array,
-        default: () => [60, 40, 20, 10, 100, 40, 80, 30]
+        default: () => [60, 40, 25, 10, 100, 40, 80, 30]
       },
       dataLabel: {
         type: Array,
@@ -138,6 +138,7 @@
       
         let offset = (endAngle + 90 - 0.5 * angle) * Math.PI / 180;
         let outerRadius = radius * Math.pow(0.9,index);
+        const stroke = Math.round(centerY * 2 * 0.004);
   
         // console.log (index , angle, cumulativeAngle, endAngle, offset);
   
@@ -148,7 +149,7 @@
           outerRadius: outerRadius,
           fill: colors[index % colors.length] + "80",
           stroke: colors[index % colors.length],
-          strokeWidth: 2,
+          strokeWidth: stroke,
           angle: 0, 
           rotation: cumulativeAngle,
         });
@@ -160,15 +161,15 @@
   
         let innerX = centerX + outerRadius * Math.sin(offset);
         let innerY = centerY - outerRadius * Math.cos(offset);
-        let outerX = centerX + (outerRadius + 25) * Math.sin(offset);
-        let outerY = centerY - (outerRadius + 25) * Math.cos(offset);
+        let outerX = centerX + (outerRadius * 1.2) * Math.sin(offset);
+        let outerY = centerY - (outerRadius * 1.2) * Math.cos(offset);
         
         var tooltip = new Konva.Line({
           // opacity: 0,
           points: [innerX, innerY, outerX, outerY,
-          offset >  Math.PI ? outerX - 20: outerX + 20, outerY,],
+          offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX, outerY,],
           stroke: colors[index % colors.length],
-          strokeWidth: 1,
+          strokeWidth: stroke - 1,
           lineCap: 'round',
           lineJoin: 'round'
         });
@@ -176,8 +177,8 @@
         var hintData = new Konva.Text({ 
           // opacity: 0,
           text: data[index], 
-          x: offset >  Math.PI ? outerX - 20: outerX + 20,
-          y: outerY - 15,
+          x: offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX,
+          y: outerY - fontSize * 1.7,
           align: offset > Math.PI ? 'right' : 'left',
           padding: 5, 
           fill: colorMode.value === 'day'? '#86909C':'#D5D5D6CC', 
@@ -186,8 +187,8 @@
   
         var hintMes = new Konva.Text({
           text: dataLabel[index] + "\n" + (data[index]/dataSum * 100).toFixed(2) + "%", 
-          x: offset >  Math.PI ? outerX - 20: outerX + 20,
-          y: outerY ,
+          x: offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX,
+          y: outerY - fontSize * 0.1,
           fontSize: fontSize * 1.2,
           align: offset > Math.PI ? 'right' : 'left',
           lineHeight: 1.2,
@@ -196,8 +197,8 @@
         })
   
         if(offset > Math.PI){
-          hintData.x( outerX - 20 - hintData.width());
-          hintMes.x(outerX - 20 - hintMes.width())
+          hintData.x( outerX - 0.1* centerX - hintData.width());
+          hintMes.x(outerX - 0.1* centerX - hintMes.width())
         }
   
         group.add(tooltip);

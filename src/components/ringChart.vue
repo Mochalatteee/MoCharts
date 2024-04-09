@@ -16,7 +16,7 @@ export default {
   props: {
     data: {
       type: Array,
-      default: () => [60, 40, 20, 10, 100, 40, 80, 30]
+      default: () => [60, 40, 25, 10, 100, 40, 80, 30]
     },
     dataLabel: {
       type: Array,
@@ -140,8 +140,8 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         endAngle = cumulativeAngle + angle + 2*gap;
       } 
     
-      let offset = (endAngle + 90 - 0.5 * angle) * Math.PI / 180;
       let outerRadius = radius ;
+      const stroke = Math.round(centerY * 2 * 0.004);
 
       // console.log (index , angle, cumulativeAngle, endAngle+90);
 
@@ -152,7 +152,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         outerRadius: outerRadius,
         fill: colors[index % colors.length] + "80",
         stroke: colors[index % colors.length],
-        strokeWidth: 2,
+        strokeWidth: stroke,
         angle: 0, 
         lineJoin: 'round',
         lineCap: 'round',
@@ -194,9 +194,9 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
       var hintNum = new Konva.Text({
         text: num + "",
         x: centerX - innerRadius,
-        y: centerY - fontSize * 2 ,
+        y: centerY - fontSize * 2.5 ,
         width: innerRadius * 2,
-        fontSize: fontSize * 3,
+        fontSize: fontSize * 3.5,
         align: 'center',
         fontWeight: 'bold',
         fill: colors[index % colors.length],

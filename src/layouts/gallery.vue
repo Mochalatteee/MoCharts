@@ -177,7 +177,7 @@ export default {
 
 .component-ctn {
   display: flex;
-  width: 46%;
+  width: 49%;
   justify-content: center;
   border-radius: 20px;
   border: solid 1px #00000010;
@@ -185,7 +185,7 @@ export default {
   padding: 10px;
   min-height: 20rem;
   height: 60vh;
-  max-height: 40rem;
+  max-height: 70vh;
 }
 
 .chart-ctn {
