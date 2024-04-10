@@ -64,8 +64,10 @@ export default {
     const ctnHeight = props.size.height;
     const ctnWidth = props.size.width;
 
-    const barWidth = (ctnWidth / data.length - ctnWidth / 50) / 2;
-    const barSpacing = barWidth - ctnWidth / 50;
+    const spaceWidth = 0.8 * ctnWidth / data.length;
+    const barWidth = 0.65 * spaceWidth;
+    const barSpacing = 0.35 * spaceWidth;
+
     const maxHeight = ctnHeight - 0.1*ctnHeight;
     const maxData = getMaxData(Math.max(...data));
 
@@ -240,7 +242,7 @@ function drawBars(
   const stroke = Math.round(ctnHeight * 0.004);
 
   data.forEach((value, index) => {
-    const x = (index + 1.5) * (barWidth + barSpacing);
+    const x = 0.15 * ctnWidth + (index) * (barWidth + barSpacing);
     const height =
       (elapsed / 1000) * (0.9 * ctnHeight - 0.1*ctnHeight) * (value / maxData);
 
@@ -283,7 +285,7 @@ function drawBars(
         fontSize: fontSize,
         padding: 10,
         fill: "white",
-        width: 60,
+        width: ctnWidth * 0.15,
         lineHeight: 1.2,
       })
     );
@@ -353,8 +355,8 @@ function drawDynamicLabel(
   const fontSize = calculateFontSize(ctnWidth, ctnHeight);
 
   dataLabel.forEach((value, index) => {
-    const x = (index + 1.5) * (barWidth + barSpacing);
-    const width = barWidth + 1 * barSpacing;
+    const x = 0.15 * ctnWidth + (index) * (barWidth + barSpacing);
+    const width = barWidth;
 
     const text = new Konva.Text({
       x: x,
@@ -363,6 +365,7 @@ function drawDynamicLabel(
       fontSize: fontSize * 1.1,
       align: "left",
       width: width,
+      align: 'center',
       wrap: 'word',
       fill: colorMode === "day" ? "#86909C" : "#D5D5D6CC", // 字体颜色
     });

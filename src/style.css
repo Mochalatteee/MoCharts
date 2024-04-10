@@ -11,7 +11,6 @@
 
   color-scheme: light dark;
   color: #454545;
-  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,6 +33,7 @@ button {
   padding: 8px 16px;
   font-size: 1vw;
   font-weight: 500;
+  color: #454545;
   font-family: inherit;
   background-color: #fafafa;
   cursor: pointer;
@@ -42,8 +42,5 @@ button {
 button:hover {
   border-color: #94b2fd;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+
 

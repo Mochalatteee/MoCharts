@@ -1,104 +1,162 @@
 <template>
-  <div class="charts">
-    <div class="component-box">
-      <div class="component-ctn">
-        <div class="chart-ctn">
-          <div class="title-box">
-            <p>Bar Chart</p>
-            <div class="modify-ctn">
-              <button @click="toggleColorMode('bar')">
-                {{ chartColorModes["bar"] === "day" ? "Night" : "Day" }}
-              </button>
-              <button @click="goToChart('bar')">Details</button>
-            </div>
-          </div>
-
-          <div ref="chartBox" class="chart-box">
-            <barChart
-              v-if="isSizeAvailable"
-              :data="[215, 105, 40, 50, 65, 40, 10]"
-              :color-mode="chartColorModes['bar']"
-              :colors="this.$colors"
-              :size="divSize"
-            ></barChart>
+  <div class="gallery">
+    
+    <div
+      class="gallery-component-ctn"
+      v-if="type === 'all' || type === 'bar'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Bar Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('bar')">
+              {{ chartColorModes["bar"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('bar')">Details</button>
           </div>
         </div>
-      </div>
-
-      <div class="component-ctn">
-        <div class="chart-ctn">
-          <div class="title-box">
-            <p>Rose Chart</p>
-            <div class="modify-ctn">
-              <button @click="toggleColorMode('rose')">
-                {{ chartColorModes["rose"] === "day" ? "Night" : "Day" }}
-              </button>
-              <button @click="goToChart('rose')">Details</button>
-            </div>
-          </div>
-
-          <div class="chart-box">
-            <roseChart
-              v-if="isSizeAvailable"
-              :data="[50, 100, 40, 50, 65, 5, 120]"
-              :color-mode="chartColorModes['rose']"
-              :colors="this.$colors"
-              :size="divSize"
-            ></roseChart>
-          </div>
+        <div ref="chartBox" class="chart-box">
+          <barChart
+            v-if="isSizeAvailable"
+            :data="[215, 105, 40, 50,75,300,235 ]"
+            :dataLabel="['item1','item2','item3','item4','item5','item6','item7']"
+            :color-mode="chartColorModes['bar']"
+            :colors="this.$colors"
+            :size="divSize"
+          ></barChart>
         </div>
       </div>
     </div>
 
-    <div class="component-box">
-      <div class="component-ctn">
-        <div class="chart-ctn">
-          <div class="title-box">
-            <p>Ring Chart</p>
-            <div class="modify-ctn">
-              <button @click="toggleColorMode('ring')">
-                {{ chartColorModes["ring"] === "day" ? "Night" : "Day" }}
-              </button>
-              <button @click="goToChart('ring')">Details</button>
-            </div>
-          </div>
-
-          <div class="chart-box">
-            <ringChart
-              v-if="isSizeAvailable"
-              :data="[210, 100, 40, 50, 65, 40, 10]"
-              :color-mode="chartColorModes['ring']"
-              :colors="this.$colors"
-              :size="divSize"
-            ></ringChart>
+    <div 
+        class="gallery-component-ctn"
+        v-if="type === 'all' || type === 'pie'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Rose Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('rose')">
+              {{ chartColorModes["rose"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('rose')">Details</button>
           </div>
         </div>
-      </div>
 
-      <div class="component-ctn">
-        <div class="chart-ctn">
-          <div class="title-box">
-            <p>Pie Chart</p>
-            <div class="modify-ctn">
-              <button @click="toggleColorMode('pie')">
-                {{ chartColorModes["pie"] === "day" ? "Night" : "Day" }}
-              </button>
-              <button @click="goToChart('pie')">Details</button>
-            </div>
-          </div>
-
-          <div class="chart-box">
-            <pieChart
-              v-if="isSizeAvailable"
-              :data="[50, 100, 40, 50, 65, 5, 120]"
-              :color-mode="chartColorModes['pie']"
-              :colors="this.$colors"
-              :size="divSize"
-            ></pieChart>
-          </div>
+        <div class="chart-box">
+          <roseChart
+            v-if="isSizeAvailable"
+            :data="[50, 100, 40, 50, 65, 5, 120]"
+            :color-mode="chartColorModes['rose']"
+            :colors="this.$colors"
+            :size="divSize"
+          ></roseChart>
         </div>
       </div>
     </div>
+    <div 
+        class="gallery-component-ctn"
+        v-if="type === 'all' || type === 'pie'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Ring Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('ring')">
+              {{ chartColorModes["ring"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('ring')">Details</button>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <ringChart
+            v-if="isSizeAvailable"
+            :data="[210, 100, 40, 50, 65, 40, 10]"
+            :color-mode="chartColorModes['ring']"
+            :colors="this.$colors"
+            :size="divSize"
+          ></ringChart>
+        </div>
+      </div>
+    </div>
+
+    <div 
+        class="gallery-component-ctn"
+        v-if="type === 'all' || type === 'pie'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Pie Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('pie')">
+              {{ chartColorModes["pie"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('pie')">Details</button>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <pieChart
+            v-if="isSizeAvailable"
+            :data="[50, 100, 40, 50, 65, 5, 120]"
+            :color-mode="chartColorModes['pie']"
+            :colors="this.$colors"
+            :size="divSize"
+          ></pieChart>
+        </div>
+      </div>
+    </div>
+
+    <div 
+        class="gallery-component-ctn"
+        v-if="type === 'all' || type === 'line'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Line Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('line')">
+              {{ chartColorModes["line"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('line')">Details</button>
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <lineChart
+            
+          ></lineChart>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="gallery-component-ctn"
+      v-if="type === 'all' || type === 'bar'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Stacked Bar Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('bar')">
+              {{ chartColorModes["bar"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('bar')">Details</button>
+          </div>
+        </div>
+        <div ref="chartBox" class="chart-box">
+          <stackedBarChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['bar']"
+            :size="divSize"
+          ></stackedBarChart>
+        </div>
+      </div>
+    </div>
+
+
+
   </div>
 </template>
 
@@ -108,15 +166,23 @@ import pieChart from "../components/pieChart.vue";
 import roseChart from "../components/roseChart.vue";
 import ringChart from "../components/ringChart.vue";
 import lineChart from "../components/lineChart.vue";
+import stackedBarChart from "../components/stackedBarChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
+  props: {
+    type: {
+      type: String,
+      default: "all",
+    },
+  },
   components: {
     barChart,
     pieChart,
     roseChart,
     ringChart,
     lineChart,
+    stackedBarChart,
   },
   data() {
     return {
@@ -125,6 +191,7 @@ export default {
         pie: "day",
         rose: "day",
         ring: "day",
+        line: "day",
       },
     };
   },
@@ -138,7 +205,7 @@ export default {
     },
   },
 
-  setup() {
+  setup(props) {
     const chartBox = ref(null);
     const divSize = ref({ width: 0, height: 0 });
     const isSizeAvailable = ref(false); // 用于控制是否渲染子组件
@@ -169,33 +236,6 @@ export default {
 </script>
 
 <style scoped>
-.component-box {
-  display: flex;
-  justify-content: space-around;
-  margin: 16px 0;
-}
-
-.component-ctn {
-  display: flex;
-  width: 49%;
-  justify-content: center;
-  border-radius: 20px;
-  border: solid 1px #00000010;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
-  padding: 10px;
-  min-height: 20rem;
-  height: 60vh;
-  max-height: 70vh;
-}
-
-.chart-ctn {
-  display: flex;
-  flex-direction: column;
-  width: max-content;
-  width: 100%;
-  height: 100%;
-}
-
 .modify-ctn {
   display: flex;
   padding: 10px 0;
@@ -222,5 +262,31 @@ export default {
   justify-content: center;
   border-radius: 20px;
   border: solid 1px #00000005;
+}
+
+.gallery {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between; /* 在容器中的项目之间平均分配空白空间 */
+}
+
+.gallery-component-ctn {
+  width: 49%; /* 每列的宽度为容器宽度的一半减去间隔的一半 */
+  margin-bottom: 20px; /* 设置下方间隔 */
+  border-radius: 20px;
+  border: solid 1px #00000010;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.02);
+  padding: 10px;
+  min-height: 20rem;
+  height: 60vh;
+  max-height: 70vh;
+}
+
+.gallery-chart-ctn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%; /* 设置内容高度 */
 }
 </style>

@@ -14,10 +14,10 @@
   <div class = "body-box">
     <div class = "category-box">
       <div class="category-list">
-        <div class="category-item-title">CATEGORY</div>
-        <div class="category-item">Bar</div>
-        <div class="category-item">Pie</div>
-        <div class="category-item">Line</div>
+        <div class="category-item-title" @click="setType('all')" :class="{ 'nav-active': type === 'all' }">CATEGORY</div>
+        <div class="category-item" @click="setType('bar')" :class="{ 'nav-active': type === 'bar' }">Bar</div>
+        <div class="category-item" @click="setType('pie')" :class="{ 'nav-active': type === 'pie' }">Pie</div>
+        <div class="category-item" @click="setType('line')" :class="{ 'nav-active': type === 'line' }">Line</div>
       </div>
     </div>
   
@@ -25,7 +25,7 @@
       <div class="">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in" appear="">
-            <component :is="Component" />
+            <component :is="Component" :type="type"/>
           </transition>
         </router-view>
       </div>
@@ -47,6 +47,17 @@ import { useRoute, useRouter } from 'vue-router';
 export default {
   components: {
     charts
+  },
+  data() {
+    return {
+      type: 'all' // 初始值
+    };
+  },
+  methods: {
+    setType(type) {
+      // 在这里根据不同的点击事件设置 type 的值
+      this.type = type;
+    }
   },
   setup() {
     const route = useRoute();
@@ -157,14 +168,16 @@ export default {
   }
 
   .category-item{
-    margin: 13px;
+    padding: 0 13px ;
+    margin: 13px 0;
     cursor: pointer;
     font-size: 1vw;
   }
 
   .category-item-title{
     font-size: 1.2vw;
-    margin: 13px;
+    padding: 0 13px ;
+    margin: 13px 0;
     cursor: default;
   }
 
@@ -193,5 +206,9 @@ export default {
       opacity: 1;
     }
 
+.nav-active{
+  border-left: solid 2px #3c61cf;
+  font-weight: bolder;
+}
 
 </style>
