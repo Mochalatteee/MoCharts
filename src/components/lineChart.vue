@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div id="container" ref="container"></div>
 </template>
 
@@ -108,81 +108,6 @@ export default {
 
 <style>
 #container {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
 }
-</style> -->
-
-<template>
-    <div id="container" ref="container"></div>
-  </template>
-  
-  <script>
-  import { ref, onMounted } from "vue";
-  import Konva from "konva";
-  
-  export default {
-    setup() {
-      const container = ref(null);
-      let stage = null;
-      let layer = null;
-      let area = null;
-  
-      onMounted(() => {
-        if (!container.value) return;
-  
-        stage = new Konva.Stage({
-          container: container.value,
-          width: 450,
-          height: 350,
-        });
-  
-        layer = new Konva.Layer();
-        stage.add(layer);
-  
-        const points = [
-        { x: 50, y: 300 },
-        { x: 150, y: 150 },
-        { x: 250, y: 200 },
-        { x: 350, y: 100 },
-        { x: 400, y: 250 },
-        { x: 450, y: 150 },
-        { x: 450, y: 350 },
-      ];
-  
-        const areaPoints = points.map((point) => ( point,  350 ));
-  
-        area = new Konva.Line({
-          points: areaPoints,
-          fillLinearGradientStartPoint: { x: 0, y: 0 },
-          fillLinearGradientEndPoint: { x: 450, y: 0 },
-          fillLinearGradientColorStops: [0, "#00f", 1, "#0ff"],
-          closed: true,
-        });
-  
-        layer.add(area);
-        layer.draw();
-  
-        // 使用 Tween 实现从左到右加载动画
-        const tween = new Konva.Tween({
-          node: area,
-          points: points.map((x, y) => ( x,  350 )),
-          duration: 2,
-          onFinish: () => {
-            console.log("Animation finished");
-          },
-        });
-  
-        tween.play();
-      });
-  
-      return { container };
-    },
-  };
-  </script>
-  
-  <style>
-  #container {
-    background-color: #ffffff;
-  }
-  </style>
-  
+</style>

@@ -20,7 +20,7 @@ export default {
         [12000, 3700, 3000, 2000],
         [9000, 3400, 3000, 2000],
         [1200, 3400, 3000, 2000],
-        [1200, 340, 300, 2000],
+        [1200, 3400, 300, 2000],
       ],
     },
     dataLabel: {
@@ -67,8 +67,8 @@ export default {
     const ctnWidth = props.size.width;
 
     const spaceWidth = (0.8 * ctnWidth) / data.length;
-    const barWidth = 0.65 * spaceWidth;
-    const barSpacing = 0.35 * spaceWidth;
+    const barWidth = 0.6 * spaceWidth;
+    const barSpacing = 0.4 * spaceWidth;
 
     const maxHeight = ctnHeight - 0.1 * ctnHeight;
     const maxData = getMaxData(Math.max(...data));
@@ -261,30 +261,10 @@ function drawBars(
   ctnWidth
 ) {
   layer.removeChildren();
+  extraLayer.removeChildren();
 
   const fontSize = calculateFontSize(ctnWidth, ctnHeight);
   const stroke = Math.round(ctnHeight * 0.004);
-
-  const hint = "";
-     // 创建文本组件
-  var tooltip = new Konva.Label({
-      x: 0,
-      y: 0,
-      opacity: 1,
-    });
-tooltip.add(
-    new Konva.Tag({
-    fill: "#ffffff",
-    pointerDirection: "left",
-    pointerWidth: 5,
-    pointerHeight: 5,
-    height: 0.5 * ctnHeight,
-    lineJoin: "round",
-    cornerRadius: 5,
-    shadowColor: "#00000030",
-    shadowBlur: 10,
-    })
-);
 
   data.forEach((array, index) => {
     const total = array.reduce(
@@ -294,37 +274,85 @@ tooltip.add(
     const group = new Konva.Group();
     const x = 0.15 * ctnWidth + index * (barWidth + barSpacing);
     let currentHeight = 0;
-    console.log(array,index);
+      // 创建文本组件
+    var tooltip = new Konva.Label({
+        x: 0,
+        y: 0,
+        opacity: 1,
+      });
+
+    const length = Math.max(...array).toLocaleString().length + dataLabel.label[0].length + 3;
+    let rectHeihgt = 0.9 * ctnHeight;
+
+    tooltip.add(
+        new Konva.Rect({
+          x:tooltip.x(),
+          y:tooltip.y(),
+          fill: "#ffffff",
+          pointerDirection: x > 0.5 * ctnWidth? "right" : "left",
+          pointerWidth: 0.01 * ctnHeight,
+          pointerHeight: 0.01 * ctnHeight,
+          lineJoin: "round",
+          width: fontSize * length,
+          height: (array.length + 1) * fontSize * 2.25,
+          cornerRadius: 5,
+          shadowColor: "#00000030",
+          shadowBlur: 0.05 * ctnHeight,
+        })
+    );
+
+    const groupText = new Konva.Group();
+    const text = new Konva.Text({
+          text: dataLabel.item[index],
+          fontSize: fontSize * 1.2,
+          padding: 10,
+          fill: "#454545",
+          lineHeight: 1.2,
+      })
+    groupText.add(text);
+
     array.forEach((value, flag) => {
-        
+
+      // const height = (elapsed / 1000) * 0.8 * ctnHeight * (value / total);
       const height =  0.8 * ctnHeight * (value / total);
-      currentHeight += height;
+      currentHeight += 0.8 * ctnHeight * (value / total);
 
       const rect = new Konva.Rect({
         x: x,
         y: 0.9 * ctnHeight - currentHeight,
         width: barWidth,
         height: height - stroke,
-        cornerRadius: [0, 0, 0, 0],
-        fill: colors[flag % colors.length] + "80",
+        cornerRadius: flag === array.length - 1 ? [10,10,0,0]: 0,
+        fill: colors[flag % colors.length] + "50",
         stroke: colors[flag % colors.length],
         strokeWidth: stroke,
         draggable: true,
       });
+
       group.add(rect);
 
-        tooltip.add(
-        new Konva.Text({
-            text: dataLabel.label[flag] + "  " + value + "\n",
-            fontSize: fontSize * 1.2,
-            padding: 10,
-            fill: colors[flag],
-            // width: ctnWidth * 0.15,
-            lineHeight: 1.2,
-        })
-        );
+      const text = new Konva.Text({
+          // x: x + 0.5 * barWidth,
+          y: (flag+1) * 20,
+          text: dataLabel.label[flag] + "  " + value + "  "+ (value / total * 100).toFixed(0).toLocaleString() + "%"+ "\n",
+          fontSize: fontSize * 1.2,
+          padding: 10,
+          fill: colors[flag],
+          lineHeight: 1.2,
+      })
+
+      groupText.add(text);  
 
     });
+
+    // clipRect.height((elapsed / 1000) * rectHeihgt);
+    console.log((elapsed / 1000) )
+
+    group.clipFunc(function(context){
+      context.rect(0,rectHeihgt - (elapsed / 1000) * rectHeihgt ,ctnWidth,rectHeihgt);
+    });
+
+    tooltip.add(groupText);
 
     layer.add(group);
     extraLayer.add(tooltip);
@@ -334,7 +362,7 @@ tooltip.add(
     group.on("mouseenter", function () {
       if (!anim.isRunning()) {
         tooltip.position({
-          x: x + 0.5 * barWidth,
+          x: x > ctnWidth * 0.5 ? x + 0.5 * barWidth - length * fontSize: x + 0.5 * barWidth,
           y: 0.2 * ctnHeight,
         });
         tooltip.show(); // 显示文本组件
@@ -353,7 +381,7 @@ tooltip.add(
   });
 
   // 重新绘制图层
-  layer.draw();
+  layer.batchDraw();
 }
 
 function calculateFontSize(ctnWidth, ctnHeight) {
@@ -427,7 +455,6 @@ function drawDynamicAxis(
   const line = Math.min(Math.max(Math.floor(ctnHeight * 0.01) + 1, 5), 10);
 
   for (let i = 0; i < line; i++) {
-    let tempvalue = Math.floor(maxData - i * (maxData / line));
 
     let value = Math.round(100 - (i * 100) / line)
       .toFixed(0)

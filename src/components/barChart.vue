@@ -270,8 +270,8 @@ function drawBars(
       new Konva.Tag({
         fill: colors[index % colors.length],
         pointerDirection: "left",
-        pointerWidth: 5,
-        pointerHeight: 5,
+        pointerWidth: 0.01 * ctnHeight,
+        pointerHeight: 0.01 * ctnHeight,
         lineJoin: "round",
         cornerRadius: 5,
         shadowColor: "#00000010",
