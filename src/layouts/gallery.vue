@@ -125,7 +125,8 @@
 
         <div class="chart-box">
           <lineChart
-            
+            v-if="isSizeAvailable"
+            :size="divSize"
           ></lineChart>
         </div>
       </div>
@@ -139,16 +140,16 @@
         <div class="title-box">
           <p>Stacked Bar Chart</p>
           <div class="modify-ctn">
-            <button @click="toggleColorMode('bar')">
-              {{ chartColorModes["bar"] === "day" ? "Night" : "Day" }}
+            <button @click="toggleColorMode('stackedBar')">
+              {{ chartColorModes["stackedBar"] === "day" ? "Night" : "Day" }}
             </button>
-            <button @click="goToChart('bar')">Details</button>
+            <button @click="goToChart('stacked-bar')">Details</button>
           </div>
         </div>
         <div ref="chartBox" class="chart-box">
           <stackedBarChart
             v-if="isSizeAvailable"
-            :color-mode="chartColorModes['bar']"
+            :color-mode="chartColorModes['stackedBar']"
             :size="divSize"
           ></stackedBarChart>
         </div>
@@ -192,6 +193,7 @@ export default {
         rose: "day",
         ring: "day",
         line: "day",
+        stackedBar: "day"
       },
     };
   },

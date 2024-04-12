@@ -3,25 +3,44 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Konva from "konva";
 
 export default {
-  setup() {
+  props: {
+    size: {
+      type: Object,
+      default: () => [
+        {
+          width: 450,
+          height: 350,
+        },
+      ],
+    },
+    colors: {
+      type: String,
+      default: '#3F6EFF'
+    }
+  },
+  setup(props) {
     const container = ref(null);
     let stage = null;
     let layer = null;
-    let shape = null;
-    let elapsedTime = 0;
-    const animationDuration = 2; // Animation duration in seconds
+
+    const colors = props.colors;
+    const ctnHeight = props.size.height;
+    const ctnWidth = props.size.width;
+
+    console.log(ctnHeight,ctnWidth);
+
 
     onMounted(() => {
       if (!container.value) return;
 
       stage = new Konva.Stage({
         container: container.value,
-        width: 450,
-        height: 350,
+        width: ctnWidth,
+        height: ctnHeight,
       });
 
       layer = new Konva.Layer();
@@ -29,81 +48,77 @@ export default {
 
       // Define shape points to create a custom shape
       const points = [
-        { x: 0, y: 350 },
+        { x: 50, y: 350 },
+        { x: 50, y: 100 },
         { x: 100, y: 150 },
-        { x: 200, y: 100 },
+        { x: 200, y: 50 },
         { x: 350, y: 200 },
         { x: 400, y: 50 },
         { x: 400, y: 350 },
       ];
 
+      const groupLine = new Konva.Group();
+
       // 补足数组长度为100的连续数组
-      const interpolatedPoints = [];
-      const step = 100 / (points.length - 1); // 计算步长
-      for (let i = 0; i < 100; i++) {
-        const index1 = Math.floor(i / step);
-        const index2 = Math.min(index1 + 1, points.length - 1);
-        const t = (i % step) / step;
-        const x = points[index1].x * (1 - t) + points[index2].x * t;
-        const y = points[index1].y * (1 - t) + points[index2].y * t;
-        interpolatedPoints.push({ x, y });
+      const drawPoints = [];
+      for (let i = 0; i < points.length; i++) {
+        const x = points[i].x ;
+        const y = points[i].y ;
+        drawPoints.push( x, y );
       }
 
-      // Initialize shape with empty points
-      shape = new Konva.Shape({
-        sceneFunc: (context, shape) => {
-          context.beginPath();
-          context.moveTo(interpolatedPoints[0].x, interpolatedPoints[0].y);
-
-          // Only draw points that are within the current animation progress
-          // const drawPoints = interpolatedPoints.filter((point, index) => index * (1 / points.length) <= shape.progress);
-          const drawPoints = interpolatedPoints.slice(
-            0,
-            Math.floor(shape.progress * interpolatedPoints.length)
-          );
-
-          drawPoints.slice(1).forEach((point) => {
-            context.lineTo(point.x, point.y);
-          });
-
-          context.closePath();
-          context.fillStrokeShape(shape);
-        },
-        fill: "#3F6EFF" + "80",
-        stroke: "#3F6EFF",
-        strokeWidth: 2,
+      const line = new Konva.Line({
+        points: drawPoints,
+        fill: '#3F6EFF' + "80",
+        stroke: '#3F6EFF',
         opacity: 1,
-        progress: 0, // Add progress attribute
-      });
+        strokeWidth: 2,
+        lineCap: 'round',
+        lineJoin: 'round',
+      })
 
-      layer.add(shape);
+      const poly = new Konva.Line({
+        points: drawPoints,
+        opacity: 1,
+        strokeWidth: 0,
+        closed: true,
+        fillLinearGradientStartPoint: { x: 225, y: 400 },
+        fillLinearGradientEndPoint: { x: 225, y: 0 },
+        fillLinearGradientColorStops: [0, '#ffffff', 1, '#3F6EFF' + "80"],
+      })
+
+      groupLine.add(line,poly);
+      layer.add(groupLine);
+
+      const anim = new Konva.Animation((frame) => {
+        const elapsed = frame.time;
+        if(elapsed < 1000) {
+          const currentChart = (elapsed / 1000) * 400;
+          groupLine.clipFunc(function(context){
+            context.rect(0, 0, currentChart, 350);
+          })
+          
+        } else {
+          groupLine.clipFunc(function(context){
+            context.rect(0, 0, 400, 350);
+          })
+          anim.stop();
+        }
+      })
+
+      anim.start();
+      
       layer.draw();
 
-      // Animate the shape
-      const animation = new Konva.Animation((frame) => {
-        const timeDiff = frame.timeDiff / 1000; // Convert time difference to seconds
-        elapsedTime += timeDiff; // Update elapsed time with time difference
-
-        const animationProgress = Math.min(elapsedTime / animationDuration, 1); // Ensure animation progress does not exceed 1
-        // Update the progress of the shape based on animation progress
-        shape.progress = animationProgress;
-
-        layer.batchDraw();
-
-        // Stop the animation when animation progress reaches 1
-        if (animationProgress >= 1) {
-          shape.progress = 2;
-          animation.stop();
-        }
-      }, layer);
-
-      // Start the animation
-      animation.start();
     });
 
     return { container };
   },
 };
+
+function drawLine(){
+
+}
 </script>
 
 <style>

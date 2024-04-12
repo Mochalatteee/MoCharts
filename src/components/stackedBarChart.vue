@@ -323,7 +323,7 @@ function drawBars(
         width: barWidth,
         height: height - stroke,
         cornerRadius: flag === array.length - 1 ? [10,10,0,0]: 0,
-        fill: colors[flag % colors.length] + "50",
+        fill: colors[flag % colors.length] + "80",
         stroke: colors[flag % colors.length],
         strokeWidth: stroke,
         draggable: true,
@@ -345,11 +345,8 @@ function drawBars(
 
     });
 
-    // clipRect.height((elapsed / 1000) * rectHeihgt);
-    console.log((elapsed / 1000) )
-
     group.clipFunc(function(context){
-      context.rect(0,rectHeihgt - (elapsed / 1000) * rectHeihgt ,ctnWidth,rectHeihgt);
+      context.rect(0, rectHeihgt - (elapsed / 1000) * rectHeihgt ,ctnWidth,rectHeihgt);
     });
 
     tooltip.add(groupText);
