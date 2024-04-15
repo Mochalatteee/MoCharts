@@ -126,6 +126,7 @@
         <div class="chart-box">
           <lineChart
             v-if="isSizeAvailable"
+            :color-mode="chartColorModes['line']"
             :size="divSize"
           ></lineChart>
         </div>
