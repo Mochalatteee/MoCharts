@@ -119,8 +119,11 @@ function drawChart(
   const groupLine = new Konva.Group();
   const maxData = getMaxData(Math.max(...data));
   const points = dataToPoints(data, maxData, ctnWidth, ctnHeight);
+  const fontSize = calculateFontSize(ctnWidth, ctnHeight);
+  const stroke = Math.round(Math.min(ctnHeight,ctnWidth) * 0.004);
 
-  drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode);
+
+  drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode,fontSize,stroke);
 
   // 补足数组长度为100的连续数组
   const polyPoints = [];
@@ -144,7 +147,7 @@ function drawChart(
     fill: colors + "80",
     stroke: colors,
     opacity: 1,
-    strokeWidth: 2,
+    strokeWidth: stroke,
     // lineCap: 'round',
     lineJoin: "round",
   });
@@ -166,8 +169,9 @@ function drawChart(
     const dot = new Konva.Circle({
       x: points[i].x,
       y: points[i].y,
-      radius: 3,
+      radius: stroke * 1.5,
       stroke: colors,
+      strokeWidth: stroke,
       fill: "white",
     });
     groupDots.add(dot);
@@ -178,7 +182,7 @@ function drawChart(
     points: [0, 0.1 * ctnHeight, 0, 0.9 * ctnHeight],
     opacity: 0,
     stroke: colorMode === "day" ? "#86909C" : "#D5D5D6CC",
-    strokeWidth: 0.5,
+    strokeWidth: stroke * 0.2,
     dash: [5, 5],
     lineJoin: "round",
     lineCap: "round",
@@ -186,8 +190,6 @@ function drawChart(
 
   groupLine.add(poly, line, supportLine, groupDots);
   layer.add(groupLine);
-
-  let tooltips = [];
 
   const anim = new Konva.Animation((frame) => {
   const elapsed = frame.time;
@@ -205,7 +207,6 @@ function drawChart(
 
     for (let i = 0; i < points.length; i++) {
       let tooltip = createTooltip(
-        stage,
         i,
         ctnWidth,
         colors,
@@ -213,10 +214,10 @@ function drawChart(
         data,
         dataLabel,
         groupHint,
-        extraLayer
+        extraLayer,
+        fontSize,
+        stroke
       );
-
-      // groupHint.add(tooltip);
 
       stage.on("mousemove", (e) => {
         if (tooltip.getParent() && groupHint.getParent()){
@@ -226,7 +227,7 @@ function drawChart(
           if (mouseX > left && mouseX < left + width) {
             tooltip.to({
               opacity: 0.8,
-              duration: 0.2,
+              duration: 0.1,
             });
           } else {
             tooltip.to({
@@ -261,19 +262,6 @@ function drawChart(
       if (mouseX > 0.1 * ctnWidth && mouseX < 0.95 * ctnWidth) {
         supportLine.points([mouseX, 0.05 * ctnHeight, mouseX, 0.9 * ctnHeight]);
         supportLine.opacity(1);
-        // const left = (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
-        // const width = (0.8 * ctnWidth) / (data.length - 1);
-        // if (mouseX > left && mouseX < left + width) {
-        //   tooltips[i].to({
-        //     opacity: 0.8,
-        //     duration: 0.2,
-        //   });
-        // } else {
-        //   tooltips[i].to({
-        //     opacity: 0,
-        //     duration: 0.1,
-        //   });
-        // }
         layer.batchDraw();
       }
     }
@@ -282,38 +270,17 @@ function drawChart(
   stage.on("mouseleave", (e) => {
     if(!anim.isRunning()){
         supportLine.opacity(0);
-        // for(let i = 0; i < data.length; i ++){
-        //   tooltips[i].to({
-        //       opacity: 0,
-        //       duration: 0.1,
-        //     });
-        // }
         layer.batchDraw();
     }
 
   });
 }
 
-function findIndexByMouseX(mouseX, ctnWidth, data) {
-  const totalWidth = 0.8 * ctnWidth;
-  const stepWidth = totalWidth / (data.length - 1);
-  const startIndex = Math.floor(0.1 * ctnWidth / stepWidth);
-  const endIndex = Math.floor(0.9 * ctnWidth / stepWidth);
-
-  for (let i = startIndex; i <= endIndex; i++) {
-    const left = i * stepWidth + 0.1 * ctnWidth;
-    const right = left + stepWidth;
-    if (mouseX >= left && mouseX <= right) {
-      return i;
-    }
-  }
-
-  // 如果未找到对应的索引，则返回 -1
-  return -1;
+function calculateFontSize(ctnWidth, ctnHeight) {
+  return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
 }
 
 function createTooltip(
-  stage,
   i,
   ctnWidth,
   colors,
@@ -321,7 +288,9 @@ function createTooltip(
   data,
   dataLabel,
   groupHint,
-  extraLayer
+  extraLayer,
+  fontSize,
+  stroke
 ) {
   var tooltip = new Konva.Label({
     x: points[i].x > 0.5 * ctnWidth ? points[i].x - 10 : points[i].x + 10,
@@ -331,16 +300,16 @@ function createTooltip(
 
   tooltip.add(
     new Konva.Tag({
-      fill: "white",
+      fill: "#ffffff",
       pointerDirection: points[i].x > 0.5 * ctnWidth ? "right" : "left",
-      pointerWidth: 5,
-      pointerHeight: 5,
-      cornerRadius: 5,
+      pointerWidth: 0.01 * ctnWidth,
+      pointerHeight: 0.01 * ctnWidth,
+      cornerRadius: 0.01 * ctnWidth,
       lineJoin: "round",
       stroke: colors,
-      strokeWidth: 1,
+      strokeWidth: 0.5 * stroke,
       shadowColor: colors,
-      shadowBlur: 10,
+      shadowBlur: 0.01 * ctnWidth,
       shadowOpacity: 0.1,
     })
   );
@@ -348,7 +317,7 @@ function createTooltip(
   tooltip.add(
     new Konva.Text({
       text: dataLabel[i] + "  \n" + data[i],
-      fontSize: 12,
+      fontSize: fontSize * 1.2,
       lineHeight: 1.2,
       padding: 5,
       fill: colors,
@@ -380,7 +349,7 @@ function getMaxData(maxData) {
   return nearestMultiple;
 }
 
-function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode) {
+function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode, fontSize, stroke) {
   const line = Math.min(Math.max(Math.floor(ctnHeight * 0.01) + 1, 5), 10);
   let mode = colorMode === "day" ? "#86909C" : "#D5D5D6CC";
 
@@ -393,7 +362,7 @@ function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode) {
     const axis = new Konva.Line({
       points: [0.1 * ctnWidth, tempY, 0.95 * ctnWidth, tempY], // x 轴坐标
       stroke: mode,
-      strokeWidth: 0.5,
+      strokeWidth: 0.2 * stroke,
       dash: [5, 5],
       lineJoin: "round",
       lineCap: "round",
@@ -403,11 +372,10 @@ function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode) {
       x: 5,
       y: tempY - 4,
       fill: mode,
-      fontSize: 10,
       text: value,
       width: 0.08 * ctnWidth,
       align: "right",
-      fontSize: 10 * 1.1,
+      fontSize: fontSize * 1.1,
     });
 
     layer.add(axis, text);
@@ -416,7 +384,7 @@ function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode) {
   const axisX = new Konva.Line({
     points: [0.1 * ctnWidth, 0.9 * ctnHeight, 0.95 * ctnWidth, 0.9 * ctnHeight],
     stroke: mode,
-    strokeWidth: 0.5,
+    strokeWidth: 0.2 * stroke,
     lineJoin: "round",
     lineCap: "round",
   });
@@ -428,7 +396,7 @@ function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode) {
     const text = new Konva.Text({
       x: x,
       y: 0.92 * ctnHeight,
-      fontSize: 12,
+      fontSize: fontSize * 1.2,
       fill: mode,
       text: value,
       width: (0.7 * 0.8 * ctnWidth) / (dataLabel.length - 1),
