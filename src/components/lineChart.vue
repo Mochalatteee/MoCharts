@@ -112,6 +112,7 @@ function drawChart(
   colorMode,
   colors
 ) {
+
   layer.removeChildren();
   extraLayer.removeChildren();
 
@@ -161,21 +162,6 @@ function drawChart(
   const groupDots = new Konva.Group();
   const groupHint = new Konva.Group();
 
-  const anim = new Konva.Animation((frame) => {
-    const elapsed = frame.time;
-    if (elapsed < 1000) {
-      const currentChart = (elapsed / 1000) * ctnWidth;
-      groupLine.clipFunc(function (context) {
-        context.rect(0, 0, currentChart, 350);
-      });
-    } else {
-      groupLine.clipFunc(function (context) {
-        context.rect(0, 0, ctnWidth, 350);
-      });
-      anim.stop();
-    }
-  });
-
   for (let i = 0; i < points.length; i++) {
     const dot = new Konva.Circle({
       x: points[i].x,
@@ -186,17 +172,6 @@ function drawChart(
     });
     groupDots.add(dot);
 
-    let tooltip = createTooltip(
-      stage,
-      i,
-      ctnWidth,
-      colors,
-      points,
-      data,
-      dataLabel,
-      anim
-    );
-    groupHint.add(tooltip);
   }
 
   const supportLine = new Konva.Line({
@@ -211,7 +186,65 @@ function drawChart(
 
   groupLine.add(poly, line, supportLine, groupDots);
   layer.add(groupLine);
-  extraLayer.add(groupHint);
+
+  let tooltips = [];
+
+  const anim = new Konva.Animation((frame) => {
+  const elapsed = frame.time;
+  
+  if (elapsed < 1000) {
+    const currentChart = (elapsed / 1000) * ctnWidth;
+    groupLine.clipFunc(function (context) {
+      context.rect(0, 0, currentChart, ctnHeight);
+    });
+  } else {
+    groupLine.clipFunc(function (context) {
+      context.rect(0, 0, ctnWidth, ctnHeight);
+    });
+    anim.stop();
+
+      for (let i = 0; i < points.length; i++) {
+        let tooltip = createTooltip(
+          stage,
+          i,
+          ctnWidth,
+          colors,
+          points,
+          data,
+          dataLabel,
+          groupHint
+        );
+
+        // groupHint.add(tooltip);
+
+        stage.on("mousemove", (e) => {
+          const mouseX = stage.getPointerPosition().x;
+          const left = (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
+          const width = (0.8 * ctnWidth) / (data.length - 1);
+            if (mouseX > left && mouseX < left + width) {
+              tooltip.to({
+                opacity: 0.8,
+                duration: 0.2,
+              });
+            } else {
+              tooltip.to({
+                opacity: 0,
+                duration: 0.1,
+              });
+            }
+        });
+
+        stage.on("mouseleave", () => {
+            tooltip.to({
+              opacity: 0,
+              duration: 0.1,
+            });
+        });
+      }
+      extraLayer.add(groupHint); // 将 groupHint 添加到 extraLayer 中
+  }
+});
+
 
   anim.start();
 
@@ -220,10 +253,23 @@ function drawChart(
   stage.on("mousemove", (e) => {
     if (!anim.isRunning()) {
       const mouseX = stage.getPointerPosition().x;
+      // const i = findIndexByMouseX(mouseX, ctnWidth, data);
       if (mouseX > 0.1 * ctnWidth && mouseX < 0.95 * ctnWidth) {
         supportLine.points([mouseX, 0.05 * ctnHeight, mouseX, 0.9 * ctnHeight]);
         supportLine.opacity(1);
-
+        // const left = (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
+        // const width = (0.8 * ctnWidth) / (data.length - 1);
+        // if (mouseX > left && mouseX < left + width) {
+        //   tooltips[i].to({
+        //     opacity: 0.8,
+        //     duration: 0.2,
+        //   });
+        // } else {
+        //   tooltips[i].to({
+        //     opacity: 0,
+        //     duration: 0.1,
+        //   });
+        // }
         layer.batchDraw();
       }
     }
@@ -231,11 +277,35 @@ function drawChart(
 
   stage.on("mouseleave", (e) => {
     if(!anim.isRunning()){
-          supportLine.opacity(0);
-       layer.batchDraw();
+        supportLine.opacity(0);
+        // for(let i = 0; i < data.length; i ++){
+        //   tooltips[i].to({
+        //       opacity: 0,
+        //       duration: 0.1,
+        //     });
+        // }
+        layer.batchDraw();
     }
 
   });
+}
+
+function findIndexByMouseX(mouseX, ctnWidth, data) {
+  const totalWidth = 0.8 * ctnWidth;
+  const stepWidth = totalWidth / (data.length - 1);
+  const startIndex = Math.floor(0.1 * ctnWidth / stepWidth);
+  const endIndex = Math.floor(0.9 * ctnWidth / stepWidth);
+
+  for (let i = startIndex; i <= endIndex; i++) {
+    const left = i * stepWidth + 0.1 * ctnWidth;
+    const right = left + stepWidth;
+    if (mouseX >= left && mouseX <= right) {
+      return i;
+    }
+  }
+
+  // 如果未找到对应的索引，则返回 -1
+  return -1;
 }
 
 function createTooltip(
@@ -246,7 +316,7 @@ function createTooltip(
   points,
   data,
   dataLabel,
-  anim
+  groupHint
 ) {
   var tooltip = new Konva.Label({
     x: points[i].x > 0.5 * ctnWidth ? points[i].x - 10 : points[i].x + 10,
@@ -280,34 +350,8 @@ function createTooltip(
     })
   );
 
-  stage.on("mousemove", (e) => {
-    const mouseX = stage.getPointerPosition().x;
-    const left = (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
-    const width = (0.8 * ctnWidth) / (data.length - 1);
-    if (!anim.isRunning()) {
-      if (mouseX > left && mouseX < left + width) {
-        tooltip.to({
-          opacity: 0.8,
-          duration: 0.2,
-        });
-      } else {
-        tooltip.to({
-          opacity: 0,
-          duration: 0.1,
-        });
-      }
-    }
-  });
+  groupHint.add(tooltip);
 
-  stage.on("mouseleave", () => {
-    if (!anim.isRunning()) {
-      tooltip.to({
-        opacity: 0,
-        duration: 0.1,
-      });
-    }
-  });
-  
   return tooltip;
 }
 
