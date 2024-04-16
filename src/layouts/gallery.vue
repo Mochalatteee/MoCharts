@@ -43,7 +43,7 @@
           </div>
         </div>
 
-        <div class="chart-box">
+        <div ref="chartBox" class="chart-box">
           <roseChart
             v-if="isSizeAvailable"
             :data="[50, 100, 40, 50, 65, 5, 120]"
@@ -69,7 +69,7 @@
           </div>
         </div>
 
-        <div class="chart-box">
+        <div ref="chartBox" class="chart-box">
           <ringChart
             v-if="isSizeAvailable"
             :data="[210, 100, 40, 50, 65, 40, 10]"
@@ -96,7 +96,7 @@
           </div>
         </div>
 
-        <div class="chart-box">
+        <div ref="chartBox" class="chart-box">
           <pieChart
             v-if="isSizeAvailable"
             :data="[50, 100, 40, 50, 65, 5, 120]"
@@ -123,7 +123,7 @@
           </div>
         </div>
 
-        <div class="chart-box">
+        <div ref="chartBox" class="chart-box">
           <lineChart
             v-if="isSizeAvailable"
             :color-mode="chartColorModes['line']"
@@ -215,7 +215,7 @@ export default {
 
     // 监听 chartBox 的变化
     watch(chartBox, (newValue, oldValue) => {
-      if (newValue != oldValue) {
+      if (chartBox.value && newValue != oldValue) {
         const width = newValue.offsetWidth - 20;
         const height = newValue.offsetHeight - 20;
         divSize.value = { width, height };

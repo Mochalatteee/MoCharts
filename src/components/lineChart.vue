@@ -203,45 +203,49 @@ function drawChart(
     });
     anim.stop();
 
-      for (let i = 0; i < points.length; i++) {
-        let tooltip = createTooltip(
-          stage,
-          i,
-          ctnWidth,
-          colors,
-          points,
-          data,
-          dataLabel,
-          groupHint
-        );
+    for (let i = 0; i < points.length; i++) {
+      let tooltip = createTooltip(
+        stage,
+        i,
+        ctnWidth,
+        colors,
+        points,
+        data,
+        dataLabel,
+        groupHint,
+        extraLayer
+      );
 
-        // groupHint.add(tooltip);
+      // groupHint.add(tooltip);
 
-        stage.on("mousemove", (e) => {
+      stage.on("mousemove", (e) => {
+        if (tooltip.getParent() && groupHint.getParent()){
           const mouseX = stage.getPointerPosition().x;
           const left = (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
           const width = (0.8 * ctnWidth) / (data.length - 1);
-            if (mouseX > left && mouseX < left + width) {
-              tooltip.to({
-                opacity: 0.8,
-                duration: 0.2,
-              });
-            } else {
-              tooltip.to({
-                opacity: 0,
-                duration: 0.1,
-              });
-            }
-        });
-
-        stage.on("mouseleave", () => {
+          if (mouseX > left && mouseX < left + width) {
+            tooltip.to({
+              opacity: 0.8,
+              duration: 0.2,
+            });
+          } else {
             tooltip.to({
               opacity: 0,
               duration: 0.1,
             });
-        });
-      }
-      extraLayer.add(groupHint); // 将 groupHint 添加到 extraLayer 中
+          }
+        }
+      });
+
+      stage.on("mouseleave", () => {
+        if (tooltip.getParent() && groupHint.getParent()){
+          tooltip.to({
+            opacity: 0,
+            duration: 0.1,
+          });
+        }
+      });
+    }
   }
 });
 
@@ -316,7 +320,8 @@ function createTooltip(
   points,
   data,
   dataLabel,
-  groupHint
+  groupHint,
+  extraLayer
 ) {
   var tooltip = new Konva.Label({
     x: points[i].x > 0.5 * ctnWidth ? points[i].x - 10 : points[i].x + 10,
@@ -351,7 +356,7 @@ function createTooltip(
   );
 
   groupHint.add(tooltip);
-
+  extraLayer.add(groupHint); // 将 groupHint 添加到 extraLayer 中
   return tooltip;
 }
 
