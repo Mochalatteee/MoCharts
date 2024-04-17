@@ -18,6 +18,7 @@
         <div class="category-item" @click="setType('bar')" :class="{ 'nav-active': type === 'bar' }">Bar</div>
         <div class="category-item" @click="setType('pie')" :class="{ 'nav-active': type === 'pie' }">Pie</div>
         <div class="category-item" @click="setType('line')" :class="{ 'nav-active': type === 'line' }">Line</div>
+        <div class="category-item" @click="setType('radar')" :class="{ 'nav-active': type === 'radar' }">Radar</div>
       </div>
     </div>
   

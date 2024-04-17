@@ -112,7 +112,6 @@ function drawChart(
   colorMode,
   colors
 ) {
-
   layer.removeChildren();
   extraLayer.removeChildren();
 
@@ -120,10 +119,18 @@ function drawChart(
   const maxData = getMaxData(Math.max(...data));
   const points = dataToPoints(data, maxData, ctnWidth, ctnHeight);
   const fontSize = calculateFontSize(ctnWidth, ctnHeight);
-  const stroke = Math.round(Math.min(ctnHeight,ctnWidth) * 0.004);
+  const stroke = Math.round(Math.min(ctnHeight, ctnWidth) * 0.004);
 
-
-  drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode,fontSize,stroke);
+  drawAxis(
+    layer,
+    maxData,
+    dataLabel,
+    ctnWidth,
+    ctnHeight,
+    colorMode,
+    fontSize,
+    stroke
+  );
 
   // 补足数组长度为100的连续数组
   const polyPoints = [];
@@ -175,7 +182,6 @@ function drawChart(
       fill: "white",
     });
     groupDots.add(dot);
-
   }
 
   const supportLine = new Konva.Line({
@@ -192,64 +198,64 @@ function drawChart(
   layer.add(groupLine);
 
   const anim = new Konva.Animation((frame) => {
-  const elapsed = frame.time;
-  
-  if (elapsed < 1000) {
-    const currentChart = (elapsed / 1000) * ctnWidth;
-    groupLine.clipFunc(function (context) {
-      context.rect(0, 0, currentChart, ctnHeight);
-    });
-  } else {
-    groupLine.clipFunc(function (context) {
-      context.rect(0, 0, ctnWidth, ctnHeight);
-    });
-    anim.stop();
+    const elapsed = frame.time;
 
-    for (let i = 0; i < points.length; i++) {
-      let tooltip = createTooltip(
-        i,
-        ctnWidth,
-        colors,
-        points,
-        data,
-        dataLabel,
-        groupHint,
-        extraLayer,
-        fontSize,
-        stroke
-      );
+    if (elapsed < 1000) {
+      const currentChart = (elapsed / 1000) * ctnWidth;
+      groupLine.clipFunc(function (context) {
+        context.rect(0, 0, currentChart, ctnHeight);
+      });
+    } else {
+      groupLine.clipFunc(function (context) {
+        context.rect(0, 0, ctnWidth, ctnHeight);
+      });
+      anim.stop();
 
-      stage.on("mousemove", (e) => {
-        if (tooltip.getParent() && groupHint.getParent()){
-          const mouseX = stage.getPointerPosition().x;
-          const left = (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
-          const width = (0.8 * ctnWidth) / (data.length - 1);
-          if (mouseX > left && mouseX < left + width) {
-            tooltip.to({
-              opacity: 0.8,
-              duration: 0.1,
-            });
-          } else {
+      for (let i = 0; i < points.length; i++) {
+        let tooltip = createTooltip(
+          i,
+          ctnWidth,
+          colors,
+          points,
+          data,
+          dataLabel,
+          groupHint,
+          extraLayer,
+          fontSize,
+          stroke
+        );
+
+        stage.on("mousemove", (e) => {
+          if (tooltip.getParent() && groupHint.getParent()) {
+            const mouseX = stage.getPointerPosition().x;
+            const left =
+              (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
+            const width = (0.8 * ctnWidth) / (data.length - 1);
+            if (mouseX > left && mouseX < left + width) {
+              tooltip.to({
+                opacity: 0.8,
+                duration: 0.1,
+              });
+            } else {
+              tooltip.to({
+                opacity: 0,
+                duration: 0.1,
+              });
+            }
+          }
+        });
+
+        stage.on("mouseleave", () => {
+          if (tooltip.getParent() && groupHint.getParent()) {
             tooltip.to({
               opacity: 0,
               duration: 0.1,
             });
           }
-        }
-      });
-
-      stage.on("mouseleave", () => {
-        if (tooltip.getParent() && groupHint.getParent()){
-          tooltip.to({
-            opacity: 0,
-            duration: 0.1,
-          });
-        }
-      });
+        });
+      }
     }
-  }
-});
-
+  });
 
   anim.start();
 
@@ -268,11 +274,10 @@ function drawChart(
   });
 
   stage.on("mouseleave", (e) => {
-    if(!anim.isRunning()){
-        supportLine.opacity(0);
-        layer.batchDraw();
+    if (!anim.isRunning()) {
+      supportLine.opacity(0);
+      layer.batchDraw();
     }
-
   });
 }
 
@@ -349,7 +354,16 @@ function getMaxData(maxData) {
   return nearestMultiple;
 }
 
-function drawAxis(layer, maxData, dataLabel, ctnWidth, ctnHeight, colorMode, fontSize, stroke) {
+function drawAxis(
+  layer,
+  maxData,
+  dataLabel,
+  ctnWidth,
+  ctnHeight,
+  colorMode,
+  fontSize,
+  stroke
+) {
   const line = Math.min(Math.max(Math.floor(ctnHeight * 0.01) + 1, 5), 10);
   let mode = colorMode === "day" ? "#86909C" : "#D5D5D6CC";
 

@@ -1,10 +1,6 @@
 <template>
   <div class="gallery">
-    
-    <div
-      class="gallery-component-ctn"
-      v-if="type === 'all' || type === 'bar'"
-    >
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'bar'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
           <p>Bar Chart</p>
@@ -18,8 +14,16 @@
         <div ref="chartBox" class="chart-box">
           <barChart
             v-if="isSizeAvailable"
-            :data="[215, 105, 40, 50,75,300,235 ]"
-            :dataLabel="['item1','item2','item3','item4','item5','item6','item7']"
+            :data="[215, 105, 40, 50, 75, 300, 235]"
+            :dataLabel="[
+              'item1',
+              'item2',
+              'item3',
+              'item4',
+              'item5',
+              'item6',
+              'item7',
+            ]"
             :color-mode="chartColorModes['bar']"
             :colors="this.$colors"
             :size="divSize"
@@ -28,10 +32,7 @@
       </div>
     </div>
 
-    <div 
-        class="gallery-component-ctn"
-        v-if="type === 'all' || type === 'pie'"
-    >
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'pie'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
           <p>Rose Chart</p>
@@ -54,10 +55,7 @@
         </div>
       </div>
     </div>
-    <div 
-        class="gallery-component-ctn"
-        v-if="type === 'all' || type === 'pie'"
-    >
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'pie'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
           <p>Ring Chart</p>
@@ -81,10 +79,7 @@
       </div>
     </div>
 
-    <div 
-        class="gallery-component-ctn"
-        v-if="type === 'all' || type === 'pie'"
-    >
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'pie'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
           <p>Pie Chart</p>
@@ -108,10 +103,7 @@
       </div>
     </div>
 
-    <div 
-        class="gallery-component-ctn"
-        v-if="type === 'all' || type === 'line'"
-    >
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
           <p>Line Chart</p>
@@ -133,10 +125,7 @@
       </div>
     </div>
 
-    <div
-      class="gallery-component-ctn"
-      v-if="type === 'all' || type === 'bar'"
-    >
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'bar'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
           <p>Stacked Bar Chart</p>
@@ -157,8 +146,29 @@
       </div>
     </div>
 
-
-
+    <div
+      class="gallery-component-ctn"
+      v-if="type === 'all' || type === 'radar'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Radar Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('radar')">
+              {{ chartColorModes["radar"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('radar')">Details</button>
+          </div>
+        </div>
+        <div ref="chartBox" class="chart-box">
+          <radarChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['radar']"
+            :size="divSize"
+          ></radarChart>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -169,6 +179,7 @@ import roseChart from "../components/roseChart.vue";
 import ringChart from "../components/ringChart.vue";
 import lineChart from "../components/lineChart.vue";
 import stackedBarChart from "../components/stackedBarChart.vue";
+import radarChart from "../components/radarChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -185,6 +196,7 @@ export default {
     ringChart,
     lineChart,
     stackedBarChart,
+    radarChart,
   },
   data() {
     return {
@@ -194,7 +206,8 @@ export default {
         rose: "day",
         ring: "day",
         line: "day",
-        stackedBar: "day"
+        stackedBar: "day",
+        radar: "day",
       },
     };
   },
