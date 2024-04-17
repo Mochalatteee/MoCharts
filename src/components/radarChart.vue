@@ -157,7 +157,6 @@ export default {
         closed: true,
         fill: colors + "30",
       });
-      //   layer.add(dataLine);
       groupRadar.add(dataLine);
 
       // 绘制雷达图的数据点
@@ -172,59 +171,90 @@ export default {
           fill: "white",
           stroke: colors,
           strokeWidth: 2,
+          name: point.label, // 设置名称
         });
-        // layer.add(circle);
         groupRadar.add(circle);
       });
 
       layer.add(groupRadar);
+      
+      //   const anim = new Konva.Animation((frame) => {
+      //     const elapsed = frame.time;
 
-    //   const anim = new Konva.Animation((frame) => {
-    //     const elapsed = frame.time;
+      //     if (elapsed < 1000) {
+      //       const currentChart = (elapsed / 1000) * radius;
+      //       const innerRadius = 0; // 内圆半径
+      //       const outerRadius = currentChart; // 外圆半径
 
-    //     if (elapsed < 1000) {
-    //       const currentChart = (elapsed / 1000) * ctnWidth;
-    //       groupRadar.clipFunc(function (context) {
-    //         context.rect(0, 0, currentChart, ctnHeight);
-    //       });
-    //     } else {
-    //       groupRadar.clipFunc(function (context) {
-    //         context.rect(0, 0, ctnWidth, ctnHeight);
-    //       });
-    //       anim.stop();
-    //     }
-    //   });
+      //       groupRadar.clipFunc(function (context) {
+      //         // 使用两个圆形裁剪区域
+      //         context.beginPath();
+      //         context.arc(center.x, center.y, outerRadius, 0, Math.PI * 2, true);
+      //         context.arc(center.x, center.y, innerRadius, 0, Math.PI * 2, true);
+      //         context.closePath();
+      //         context.clip();
+      //       });
+      //     } else {
+      //       const outerRadius = ctnWidth; // 完整的裁剪区域的外圆半径
 
-    const anim = new Konva.Animation((frame) => {
-  const elapsed = frame.time;
+      //       groupRadar.clipFunc(function (context) {
+      //         // 恢复到完整的裁剪区域
+      //         context.beginPath();
+      //         context.arc(center.x, center.y, outerRadius, 0, Math.PI * 2, true);
+      //         context.closePath();
+      //         context.clip();
+      //       });
+      //       anim.stop();
+      //     }
+      //   });
 
-  if (elapsed < 1000) {
-    const currentChart = (elapsed / 1000) * radius;
-    const innerRadius = 0; // 内圆半径
-    const outerRadius = currentChart; // 外圆半径
+      const anim = new Konva.Animation((frame) => {
+        const elapsed = frame.time;
+        const duration = 700;
 
-    groupRadar.clipFunc(function (context) {
-      // 使用两个圆形裁剪区域
-      context.beginPath();
-      context.arc(center.x, center.y, outerRadius, 0, Math.PI * 2, true);
-      context.arc(center.x, center.y, innerRadius, 0, Math.PI * 2, true);
-      context.closePath();
-      context.clip();
-    });
-  } else {
-    const outerRadius = ctnWidth; // 完整的裁剪区域的外圆半径
+        if (elapsed < duration) {
+          // 计算当前时间对应的半径
+          const currentRadius = (elapsed / duration) * radius;
 
-    groupRadar.clipFunc(function (context) {
-      // 恢复到完整的裁剪区域
-      context.beginPath();
-      context.arc(center.x, center.y, outerRadius, 0, Math.PI * 2, true);
-      context.closePath();
-      context.clip();
-    });
-    anim.stop();
-  }
-});
+          // 更新数据线的位置
+          dataLine.points(
+            data
+              .map((point, index) => {
+                const value = point.value * currentRadius;
+                const x =
+                  center.x + value * Math.cos(index * angle - Math.PI / 2);
+                const y =
+                  center.y + value * Math.sin(index * angle - Math.PI / 2);
+                return [x, y];
+              })
+              .flat()
+          );
 
+          // 更新数据点的位置
+          data.forEach((point, index) => {
+            const value = point.value * currentRadius;
+            const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
+            const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
+            const circle = groupRadar.findOne(`.${point.label}`);
+            if (circle) {
+              circle.position({ x: x, y: y }); // 更新位置
+            }
+          });
+
+          layer.batchDraw(); // 手动进行图层的重新绘制
+        } else {
+          const outerRadius = ctnWidth; // 完整的裁剪区域的外圆半径
+
+          groupRadar.clipFunc(function (context) {
+            // 恢复到完整的裁剪区域
+            context.beginPath();
+            context.arc(center.x, center.y, outerRadius, 0, Math.PI * 2, true);
+            context.closePath();
+            context.clip();
+          });
+          anim.stop();
+        }
+      });
 
       anim.start();
 
