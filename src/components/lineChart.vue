@@ -298,7 +298,7 @@ function createTooltip(
   stroke
 ) {
   var tooltip = new Konva.Label({
-    x: points[i].x > 0.5 * ctnWidth ? points[i].x - 10 : points[i].x + 10,
+    x: points[i].x > 0.5 * ctnWidth ? points[i].x - fontSize : points[i].x + fontSize,
     y: points[i].y,
     opacity: 0,
   });
@@ -324,7 +324,7 @@ function createTooltip(
       text: dataLabel[i] + "  \n" + data[i],
       fontSize: fontSize * 1.2,
       lineHeight: 1.2,
-      padding: 5,
+      padding: fontSize * 0.5,
       fill: colors,
     })
   );
