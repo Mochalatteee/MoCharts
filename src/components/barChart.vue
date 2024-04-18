@@ -269,7 +269,7 @@ function drawBars(
     tooltip.add(
       new Konva.Tag({
         fill: colors[index % colors.length],
-        pointerDirection: "left",
+        pointerDirection: rect.x() > ctnWidth * 0.5? "right":"left",
         pointerWidth: 0.01 * ctnHeight,
         pointerHeight: 0.01 * ctnHeight,
         lineJoin: "round",
@@ -282,10 +282,10 @@ function drawBars(
     tooltip.add(
       new Konva.Text({
         text: dataLabel[index] + "\n" + value,
-        fontSize: fontSize,
-        padding: 10,
+        fontSize: fontSize * 1.1,
+        padding: fontSize,
         fill: "white",
-        width: ctnWidth * 0.15,
+        // width: ctnWidth * 0.15,
         lineHeight: 1.2,
       })
     );
@@ -297,7 +297,7 @@ function drawBars(
     rect.on("mouseenter", function () {
       if (!anim.isRunning()) {
         tooltip.position({
-          x: rect.x() + rect.width(),
+          x: rect.x() > ctnWidth * 0.5? rect.x(): rect.x() + rect.width(),
           y: rect.y() * 1.025,
         });
         tooltip.show(); // 显示文本组件

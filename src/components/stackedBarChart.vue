@@ -334,7 +334,7 @@ function drawBars(
       const text = new Konva.Text({
           // x: x + 0.5 * barWidth,
           y: (flag+1) * 20,
-          text: dataLabel.label[flag] + "  " + value + "  "+ (value / total * 100).toFixed(0).toLocaleString() + "%"+ "\n",
+          text: "■ " + dataLabel.label[flag] + "  " + value + "  "+ (value / total * 100).toFixed(0).toLocaleString() + "%"+ "\n",
           fontSize: fontSize * 1.2,
           padding: 10,
           fill: colors[flag],
