@@ -295,7 +295,7 @@ function drawBars(
           lineJoin: "round",
           width: fontSize * length,
           height: (array.length + 1) * fontSize * 2.25,
-          cornerRadius: 5,
+          cornerRadius: 0.01 * ctnWidth,
           shadowColor: "#00000030",
           shadowBlur: 0.05 * ctnHeight,
         })
@@ -305,7 +305,7 @@ function drawBars(
     const text = new Konva.Text({
           text: dataLabel.item[index],
           fontSize: fontSize * 1.2,
-          padding: 10,
+          padding: fontSize,
           fill: "#454545",
           lineHeight: 1.2,
       })
@@ -333,7 +333,7 @@ function drawBars(
 
       const text = new Konva.Text({
           // x: x + 0.5 * barWidth,
-          y: (flag+1) * 20,
+          y: (flag+1) * fontSize * 1.5,
           text: "■ " + dataLabel.label[flag] + "  " + value + "  "+ (value / total * 100).toFixed(0).toLocaleString() + "%"+ "\n",
           fontSize: fontSize * 1.2,
           padding: 10,

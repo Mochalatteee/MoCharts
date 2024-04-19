@@ -169,6 +169,30 @@
         </div>
       </div>
     </div>
+
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Line Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('multLine')">
+              {{ chartColorModes["multLine"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('multLine')">Details</button>
+          </div>
+        </div>
+
+        <div ref="chartBox" class="chart-box">
+          <multiLineChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['multLine']"
+            :size="divSize"
+          ></multiLineChart>
+        </div>
+      </div>
+    </div>
+
+    
   </div>
 </template>
 
@@ -180,6 +204,7 @@ import ringChart from "../components/ringChart.vue";
 import lineChart from "../components/lineChart.vue";
 import stackedBarChart from "../components/stackedBarChart.vue";
 import radarChart from "../components/radarChart.vue";
+import multiLineChart from "../components/multiLineChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -197,6 +222,7 @@ export default {
     lineChart,
     stackedBarChart,
     radarChart,
+    multiLineChart,
   },
   data() {
     return {
@@ -208,6 +234,7 @@ export default {
         line: "day",
         stackedBar: "day",
         radar: "day",
+        multLine: "day",
       },
     };
   },

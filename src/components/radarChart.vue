@@ -33,10 +33,7 @@ export default {
       type: Array,
       default: () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     },
-    colorMode: {
-      type: String,
-      default: "day",
-    },
+
   },
 
   setup(props) {
