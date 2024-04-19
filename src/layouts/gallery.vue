@@ -173,7 +173,7 @@
     <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
-          <p>Line Chart</p>
+          <p>Multi-Data Line Chart</p>
           <div class="modify-ctn">
             <button @click="toggleColorMode('multLine')">
               {{ chartColorModes["multLine"] === "day" ? "Night" : "Day" }}
@@ -192,6 +192,29 @@
       </div>
     </div>
 
+    <div
+      class="gallery-component-ctn"
+      v-if="type === 'all' || type === 'radar'"
+    >
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Multi-Data Radar Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('multRadar')">
+              {{ chartColorModes["multRadar"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('multRadar')">Details</button>
+          </div>
+        </div>
+        <div ref="chartBox" class="chart-box">
+          <multiRadarChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['multRadar']"
+            :size="divSize"
+          ></multiRadarChart>
+        </div>
+      </div>
+    </div>
     
   </div>
 </template>
@@ -205,6 +228,7 @@ import lineChart from "../components/lineChart.vue";
 import stackedBarChart from "../components/stackedBarChart.vue";
 import radarChart from "../components/radarChart.vue";
 import multiLineChart from "../components/multiLineChart.vue";
+import multiRadarChart from "../components/multiRadarChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -223,6 +247,7 @@ export default {
     stackedBarChart,
     radarChart,
     multiLineChart,
+    multiRadarChart,
   },
   data() {
     return {
@@ -235,6 +260,7 @@ export default {
         stackedBar: "day",
         radar: "day",
         multLine: "day",
+        multRadar: "day"
       },
     };
   },

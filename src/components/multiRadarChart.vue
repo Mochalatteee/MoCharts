@@ -18,8 +18,8 @@ export default {
       ],
     },
     colors: {
-      type: String,
-      default: "#3F6EFF",
+      type: Array,
+      default: ["#3F6EFF","#DE558A"],
     },
     colorMode: {
       type: String,
@@ -27,13 +27,15 @@ export default {
     },
     data: {
       type: Array,
-      default: () => [0.8, 0.1, 0.3, 0.9, 0.2, 0.4, 0.6],
+      default: () => [
+        [0.8, 0.1, 0.3, 0.9, 0.2, 0.4, 0.6],
+        [0.2, 0.3, 0.5, 0.7, 0.4, 0.7, 1],
+      ],
     },
     dataLabel: {
       type: Array,
       default: () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     },
-
   },
 
   setup(props) {
@@ -112,11 +114,12 @@ function drawChart(
   colorMode
 ) {
   layer.removeChildren();
+  extraLayer.removeChildren();
+
   let data = [];
-  if (dataNum.length === dataLabel.length) {
-    for (let i = 0; i < dataNum.length; i++) {
-      data.push({ value: dataNum[i], label: dataLabel[i] });
-    }
+  for (let i = 0; i < dataLabel.length; i++) {
+    let value = dataNum.map((subArray) => subArray[i]);
+    data.push({ value: value, label: dataLabel[i] });
   }
 
   const radius = Math.min(ctnWidth * 0.4, ctnHeight * 0.4); // 雷达图的半径
@@ -124,6 +127,7 @@ function drawChart(
 
   // 绘制雷达图的背景网格线
   const numSides = data.length;
+  const dataSize = dataNum.length;
   const angle = (2 * Math.PI) / numSides;
   const loop = Math.min(Math.max(Math.floor(ctnHeight * 0.01) + 1, 5), 10);
   const fontSize = calculateFontSize(ctnWidth, ctnHeight);
@@ -187,8 +191,8 @@ function drawChart(
   }
 
   for (let i = 0; i < numSides; i++) {
-    let x = center.x + radius * Math.cos((i ) * angle - Math.PI / 2);
-    let y = center.y + radius * Math.sin((i ) * angle - Math.PI / 2);
+    let x = center.x + radius * Math.cos(i * angle - Math.PI / 2);
+    let y = center.y + radius * Math.sin(i * angle - Math.PI / 2);
     const line = new Konva.Line({
       points: [center.x, center.y, x, y],
       stroke: colorMode === "day" ? "#86909C" + "60" : "#D5D5D6CC",
@@ -210,28 +214,32 @@ function drawChart(
 
     layer.add(line, text);
   }
+let dataLine = [];
 
-  // 绘制雷达图的数据线
-  const dataLine = new Konva.Line({
+
+for(let i = 0; i < dataSize; i++){
+      // 绘制雷达图的数据线
+  const line = new Konva.Line({
     points: data
       .map((point, index) => {
-        const value = point.value * radius;
+        const value = point.value[i] * radius;
         const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
         const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
         return [x, y];
       })
       .flat(),
-    stroke: colors,
+    stroke: colors[i % colors.length],
     strokeWidth: stroke,
     closed: true,
-    fill: colorMode === "day" ? colors + "30" : colors + "60",
+    fill: colorMode === "day" ? colors[i % colors.length] + "30" : colors[i % colors.length] + "60",
   });
+  groupRadar.add(line);
+  dataLine.push(line);
 
-  groupRadar.add(dataLine);
-
-  // 绘制雷达图的数据点
-  data.forEach((point, index) => {
-    const value = point.value * radius;
+  const groupCircle = new Konva.Group();
+   
+  data.forEach((point,index)=>{
+    const value = point.value[i] * radius;
     const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
     const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
     const circle = new Konva.Circle({
@@ -239,93 +247,116 @@ function drawChart(
       y: y,
       radius: 1.5 * stroke,
       fill: "white",
-      stroke: colors,
+      stroke: colors[i % colors.length],
       strokeWidth: stroke,
-      name: point.label, // 设置名称
+      name: point.label + i, // 设置名称
     });
-    groupRadar.add(circle);
+    groupCircle.add(circle);
+
+  })
+  groupRadar.add(groupCircle);
+}
+  layer.add(groupRadar);
+
+const longestLabel = data.reduce((longest, item) => {
+  return item.label.length > longest.length ? item.label : longest;
+}, '');
+
+  data.forEach((point, index) => {
+    const length = Math.max(longestLabel.length, 6 );
 
     const tooltip = new Konva.Label({
-      x: x > 0.5 * ctnWidth ? x + fontSize : x - fontSize,
-      y: y,
-      opacity: 0,
+      x: center.x,
+      y: center.y,
+      opacity: 1,
     });
 
     tooltip.add(
-      new Konva.Tag({
+      new Konva.Rect({
+        x:0,
+        y:0,
         fill: "#ffffff",
-        pointerDirection: x > 0.5 * ctnWidth ? "left" : "right",
-        pointerWidth: 0.01 * ctnWidth,
-        pointerHeight: 0.01 * ctnWidth,
         cornerRadius: 0.01 * ctnWidth,
         lineJoin: "round",
-        stroke: colors,
+        width: length * fontSize,
+        height: (dataSize + 1) * fontSize * 2,
+        stroke: colors[0],
         strokeWidth: 0.5 * stroke,
-        shadowColor: colors,
+        shadowColor: colors[0],
         shadowBlur: 0.01 * ctnWidth,
         shadowOpacity: 0.1,
       })
     );
-
-    tooltip.add(
-      new Konva.Text({
-        text: point.label + "  \n" + (point.value * 100).toFixed(1) + "%",
+    const groupText = new Konva.Group();
+    const item = new Konva.Text({
+        text: point.label,
         fontSize: fontSize * 1.2,
+        padding: fontSize,
+        fill: "#454545",
         lineHeight: 1.2,
-        padding: fontSize * 0.5,
-        fill: colors,
-      })
-    );
+    })
+    groupText.add(item);
+
+    for(let i = 0; i < dataSize; i++){
+        const text = new Konva.Text({
+            y: ( i + 1) * fontSize * 1.5,
+            text: (point.value[i] * 100).toFixed(1) + "%",
+            fontSize: fontSize * 1.2,
+            lineHeight: 1.2,
+            padding: fontSize ,
+            fill: colors[i],
+        }) 
+        groupText.add(text);
+    }
+
+    tooltip.add(groupText)
 
     // 监听舞台的鼠标移动事件
-    stage.on('mousemove', () => {
-    const mouseX = stage.getPointerPosition().x;
-    const mouseY = stage.getPointerPosition().y;
+    stage.on("mousemove", () => {
+      const mouseX = stage.getPointerPosition().x;
+      const mouseY = stage.getPointerPosition().y;
 
-    // 计算鼠标位置相对于雷达图中心的偏移量
-    const offsetX = mouseX - center.x;
-    const offsetY = -(mouseY - center.y);
+      // 计算鼠标位置相对于雷达图中心的偏移量
+      const offsetX = mouseX - center.x;
+      const offsetY = - (mouseY - center.y);
 
-    // 计算鼠标位置相对于雷达图中心的极坐标
-    const r = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-    let a = Math.atan2(offsetX, offsetY);
-    if (a < - 0.5 * angle) {
+      // 计算鼠标位置相对于雷达图中心的极坐标
+      const r = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+      let a = Math.atan2(offsetX, offsetY);
+      if (a < - 0.5 * angle) {
         a += 2 * Math.PI; // 转换为 0 到 2π 的角度
-    }
+      }
 
-    let startAngle =  ( index ) * angle - 0.5 * angle;
-    let endAngle = startAngle + angle;
-    // console.log(point.label,index);
-    // console.log((a * (180 / Math.PI)).toFixed(1), (startAngle * 180 / Math.PI).toFixed(1), (endAngle * 180 / Math.PI).toFixed(1));
+      let startAngle = index * angle - 0.5 * angle;
+      let endAngle = startAngle + angle;
 
-    // 判断鼠标位置是否在扇形范围内
-    const isInSector = a >= startAngle && a <= endAngle && r <= radius;
-    if(isInSector){
+      // 判断鼠标位置是否在扇形范围内
+      const isInSector = a >= startAngle && a <= endAngle && r <= radius;
+      if (isInSector) {
         tooltip.to({
-            opacity: 0.8,
-            duration: 0.1,
-        })
-    } else {
+          opacity: 0.8,
+          duration: 0,
+          x: mouseX + 10,
+          y: mouseY
+        });
+      } else {
         tooltip.to({
-            opacity: 0,
-            duration: 0.1,
-        })
-    }
-
+          opacity: 0,
+          duration: 0,
+        });
+      }
     });
 
-    stage.on('mouseleave', ()=>{
-        tooltip.to({
-            opacity: 0,
-            duration: 0.1,
-        })
-    })
+    stage.on("mouseleave", () => {
+      tooltip.to({
+        opacity: 0,
+        duration: 0,
+      });
+    });
 
     groupHint.add(tooltip);
-
   });
-
-  layer.add(groupRadar);
+  
   extraLayer.add(groupHint);
 
   const anim = new Konva.Animation((frame) => {
@@ -335,29 +366,33 @@ function drawChart(
     if (elapsed < duration) {
       // 计算当前时间对应的半径
       const currentRadius = (elapsed / duration) * radius;
+      for(let i = 0; i < dataSize; i ++){
+              // 更新数据线的位置
+        dataLine[i].points(
+            data
+            .map((point, index) => {
+                const value = point.value[i] * currentRadius;
+                const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
+                const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
+                return [x, y];
+            })
+            .flat()
+        );
 
-      // 更新数据线的位置
-      dataLine.points(
-        data
-          .map((point, index) => {
-            const value = point.value * currentRadius;
+        // 更新数据点的位置
+        data.forEach((point, index) => {
+            
+            const value = point.value[i] * currentRadius;
             const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
             const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
-            return [x, y];
-          })
-          .flat()
-      );
+            const circle = groupRadar.findOne(`.${point.label + i}`);
 
-      // 更新数据点的位置
-      data.forEach((point, index) => {
-        const value = point.value * currentRadius;
-        const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
-        const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
-        const circle = groupRadar.findOne(`.${point.label}`);
-        if (circle) {
-          circle.position({ x: x, y: y }); // 更新位置
-        }
-      });
+            if (circle) {
+            circle.position({ x: x, y: y }); // 更新位置
+            }
+        });
+
+      }
 
       layer.batchDraw(); // 手动进行图层的重新绘制
     } else {
