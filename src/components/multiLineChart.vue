@@ -29,8 +29,11 @@ export default {
       ],
     },
     dataLabel: {
-      type: Array,
-      default: () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      type: Object,
+      default: () => ({
+        item: ["item1","item2"],
+        label:["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      })
     },
     colorMode: {
       type: String,
@@ -46,10 +49,11 @@ export default {
     const colors = props.colors;
     const colorMode = props.colorMode;
     const data = props.data;
-    const dataLabel = props.dataLabel;
+    const dataLabel = props.dataLabel.label;
+    const dataItem = props.dataLabel.item;
     const ctnHeight = props.size.height;
     const ctnWidth = props.size.width;
-
+    
     watch(
       () => props.colorMode,
       (newValue, oldValue) => {
@@ -67,6 +71,7 @@ export default {
           ctnHeight,
           data,
           dataLabel,
+          dataItem,
           newValue,
           colors
         );
@@ -95,6 +100,7 @@ export default {
         ctnHeight,
         data,
         dataLabel,
+        dataItem,
         colorMode,
         colors
       );
@@ -112,6 +118,7 @@ function drawChart(
   ctnHeight,
   data,
   dataLabel,
+  dataItem,
   colorMode,
   colors
 ) {
@@ -221,6 +228,11 @@ function drawChart(
       anim.stop();
 
       for (let i = 0; i < dataLabel.length; i++) {
+        const itemLength = dataItem.reduce((max, str) => {
+            return Math.max(max, str.length);
+        }, 0);
+
+        const length = Math.max(...data.flat()).toLocaleString().length  + itemLength;
         let tooltip = createTooltip(
           i,
           ctnWidth,
@@ -229,6 +241,7 @@ function drawChart(
           // points,
           data,
           dataLabel,
+          dataItem,
           groupHint,
           extraLayer,
           fontSize,
@@ -246,7 +259,7 @@ function drawChart(
               tooltip.to({
                 opacity: 0.8,
                 duration: 0,
-                x: mouseX > 0.7 * ctnWidth ? mouseX - tooltip.width() * 1.5 : mouseX + 10,
+                x: mouseX > 0.7 * ctnWidth ? mouseX - length * fontSize - 10: mouseX + 10,
                 y: mouseY,
               });
             } else {
@@ -306,24 +319,23 @@ function createTooltip(
   ctnWidth,
   ctnHeight,
   colors,
-  // points,
   data,
   dataLabel,
+  dataItem,
   groupHint,
   extraLayer,
   fontSize,
   stroke
 ) {
-  const length = Math.max(...data.flat()).toLocaleString().length;
+  const itemLength = dataItem.reduce((max, str) => {
+    return Math.max(max, str.length);
+}, 0);
+
+  const length = Math.max(...data.flat()).toLocaleString().length  + itemLength;
   const groupText = new Konva.Group();
   const x = (i * 0.8 * ctnWidth) / (dataLabel.length - 1) + 0.1 * ctnWidth;
 
   var tooltip = new Konva.Label({
-    // x:
-    //   points[i].x > 0.5 * ctnWidth
-    //     ? points[i].x - fontSize
-    //     : points[i].x + fontSize,
-    // y: points[i].y,
     x: x,
     y: 0.9*ctnHeight,
     opacity: 0,
@@ -358,7 +370,7 @@ function createTooltip(
   data.forEach((value, index)=>{
     const text =  new Konva.Text({
         y: (index + 1) * fontSize * 1.5,
-        text: data[index][i] + '\n',
+        text:"● " +  dataItem[index] + " " + data[index][i] + '\n',
         fontSize: fontSize * 1.2,
         lineHeight: 1.2,
         padding: fontSize ,

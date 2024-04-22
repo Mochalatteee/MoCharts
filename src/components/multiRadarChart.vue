@@ -28,13 +28,15 @@ export default {
     data: {
       type: Array,
       default: () => [
-        [0.8, 0.1, 0.3, 0.9, 0.2, 0.4, 0.6],
+        [0.6, 0.7, 0.9, 0.3, 0.6, 0.1, 0.8],
         [0.2, 0.3, 0.5, 0.7, 0.4, 0.7, 1],
       ],
     },
     dataLabel: {
-      type: Array,
-      default: () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      type: Object,
+      default: () => ({
+        item: ["item1","item2"],
+        label:["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}),
     },
   },
 
@@ -117,9 +119,9 @@ function drawChart(
   extraLayer.removeChildren();
 
   let data = [];
-  for (let i = 0; i < dataLabel.length; i++) {
+  for (let i = 0; i < dataLabel.label.length; i++) {
     let value = dataNum.map((subArray) => subArray[i]);
-    data.push({ value: value, label: dataLabel[i] });
+    data.push({ value: value, label: dataLabel.label[i] });
   }
 
   const radius = Math.min(ctnWidth * 0.4, ctnHeight * 0.4); // 雷达图的半径
@@ -258,12 +260,18 @@ for(let i = 0; i < dataSize; i++){
 }
   layer.add(groupRadar);
 
-const longestLabel = data.reduce((longest, item) => {
-  return item.label.length > longest.length ? item.label : longest;
-}, '');
+    const longestLabel = data.reduce((longest, item) => {
+    return item.label.length > longest.length ? item.label : longest;
+    }, '');
 
+    const longestItem = dataLabel.item.reduce((longest, item) =>{
+        return item.length > longest.length ? item : longest;
+    })
+
+  const length = Math.max(longestLabel.length + longestItem.length + 2, 6 );
   data.forEach((point, index) => {
-    const length = Math.max(longestLabel.length, 6 );
+    
+    // console.log(length);
 
     const tooltip = new Konva.Label({
       x: center.x,
@@ -300,7 +308,7 @@ const longestLabel = data.reduce((longest, item) => {
     for(let i = 0; i < dataSize; i++){
         const text = new Konva.Text({
             y: ( i + 1) * fontSize * 1.5,
-            text: (point.value[i] * 100).toFixed(1) + "%",
+            text: "● " + dataLabel.item[i] + " " + (point.value[i] * 100).toFixed(1) + "%",
             fontSize: fontSize * 1.2,
             lineHeight: 1.2,
             padding: fontSize ,
@@ -309,7 +317,8 @@ const longestLabel = data.reduce((longest, item) => {
         groupText.add(text);
     }
 
-    tooltip.add(groupText)
+    tooltip.add(groupText);
+    groupHint.add(tooltip);
 
     // 监听舞台的鼠标移动事件
     stage.on("mousemove", () => {
@@ -333,28 +342,35 @@ const longestLabel = data.reduce((longest, item) => {
       // 判断鼠标位置是否在扇形范围内
       const isInSector = a >= startAngle && a <= endAngle && r <= radius;
       if (isInSector) {
-        tooltip.to({
+        if(tooltip.getParent() && groupHint.getParent()){
+                    tooltip.to({
           opacity: 0.8,
           duration: 0,
-          x: mouseX + 10,
+          x: mouseX > 0.7 * ctnWidth ? mouseX - 10 - length * fontSize:mouseX + 10,
           y: mouseY
         });
+        }
+
       } else {
-        tooltip.to({
+        if(tooltip.getParent() && groupHint.getParent()){
+                    tooltip.to({
           opacity: 0,
           duration: 0,
         });
+        }
+
       }
     });
 
     stage.on("mouseleave", () => {
-      tooltip.to({
-        opacity: 0,
-        duration: 0,
-      });
-    });
 
-    groupHint.add(tooltip);
+          if(tooltip.getParent() && groupHint.getParent()){
+                    tooltip.to({
+          opacity: 0,
+          duration: 0,
+        });
+        }
+    });
   });
   
   extraLayer.add(groupHint);

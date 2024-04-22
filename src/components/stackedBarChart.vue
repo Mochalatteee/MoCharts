@@ -37,7 +37,7 @@ export default {
     },
     colors: {
       type: Array,
-      default: () => ["#1456EB", "#3BE8EB", "#FBC645", "#DE558A"],
+      default: () => ["#1456EB", "#30C9C9", "#FBC645", "#DE558A"],
     },
     size: {
       type: Object,
@@ -334,7 +334,7 @@ function drawBars(
       const text = new Konva.Text({
           // x: x + 0.5 * barWidth,
           y: (flag+1) * fontSize * 1.5,
-          text: "■ " + dataLabel.label[flag] + "  " + value + "  "+ (value / total * 100).toFixed(0).toLocaleString() + "%"+ "\n",
+          text: "● " + dataLabel.label[flag] + "  " + value + "  "+ (value / total * 100).toFixed(0).toLocaleString() + "%"+ "\n",
           fontSize: fontSize * 1.2,
           padding: 10,
           fill: colors[flag],
