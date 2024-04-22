@@ -169,20 +169,20 @@
       fillLinearGradientColorStops: [0, "#ffffff00", 1, colors + "80"],
     });
   
-    const groupDots = new Konva.Group();
+    // const groupDots = new Konva.Group();
     const groupHint = new Konva.Group();
   
-    for (let i = 0; i < points.length; i++) {
-      const dot = new Konva.Circle({
-        x: points[i].x,
-        y: points[i].y,
-        radius: stroke * 1.5,
-        stroke: colors,
-        strokeWidth: stroke,
-        fill: "white",
-      });
-      groupDots.add(dot);
-    }
+    // for (let i = 0; i < points.length; i++) {
+    //   const dot = new Konva.Circle({
+    //     x: points[i].x,
+    //     y: points[i].y,
+    //     radius: stroke * 1.5,
+    //     stroke: colors,
+    //     strokeWidth: stroke,
+    //     fill: "white",
+    //   });
+    //   groupDots.add(dot);
+    // }
   
     const supportLine = new Konva.Line({
       points: [0, 0.1 * ctnHeight, 0, 0.9 * ctnHeight],
@@ -194,7 +194,7 @@
       lineCap: "round",
     });
   
-    groupLine.add(poly, line, supportLine, groupDots);
+    groupLine.add(poly, line, supportLine);
     layer.add(groupLine);
   
     const anim = new Konva.Animation((frame) => {

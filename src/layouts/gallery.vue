@@ -215,6 +215,29 @@
         </div>
       </div>
     </div>
+
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Large Line Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('multLine')">
+              {{ chartColorModes["multLine"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('multLine')">Details</button>
+          </div>
+        </div>
+
+        <div ref="chartBox" class="chart-box">
+          <largeLineChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['line']"
+            :size="divSize"
+          >
+          </largeLineChart>
+        </div>
+      </div>
+    </div>
     
   </div>
 </template>
@@ -229,6 +252,7 @@ import stackedBarChart from "../components/stackedBarChart.vue";
 import radarChart from "../components/radarChart.vue";
 import multiLineChart from "../components/multiLineChart.vue";
 import multiRadarChart from "../components/multiRadarChart.vue";
+import largeLineChart from "../components/largeLineChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -248,6 +272,7 @@ export default {
     radarChart,
     multiLineChart,
     multiRadarChart,
+    largeLineChart,
   },
   data() {
     return {

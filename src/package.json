@@ -1,0 +1,28 @@
+{
+  "name": "mocharts",
+  "version": "1.0.1",
+  "description": "provide colorful charts components",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mochalatteee/MyCharts.git"
+  },
+  "author": "MochaLatteee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mochalatteee/MyCharts/issues"
+  },
+  "homepage": "https://github.com/Mochalatteee/MyCharts#readme",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "autoprefixer": "^10.4.19",
+    "konva": "^9.3.6",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3"
+  }
+}

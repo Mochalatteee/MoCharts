@@ -1,7 +1,9 @@
 {
-  "name": "test",
-  "private": true,
-  "version": "0.0.0",
+  "name": "mocharts",
+  "private": false,
+  "description": "colorful charts component ver1.0",
+  "version": "0.1.0",
+  "main": "main.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -20,5 +22,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
     "vite": "^5.1.6"
-  }
+  },
+  "author": "MochaLatte",
+  "license": "MIT"
 }
