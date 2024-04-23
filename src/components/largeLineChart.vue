@@ -25,8 +25,8 @@
   type: Array,
   default: () => {
     const data = [];
-    let currentValue = 500; // 将 currentValue 定义为变量，并初始化为 0
-    for (let i = 0; i < 1000; i++) {
+    let currentValue = 400; // 将 currentValue 定义为变量，并初始化为 0
+    for (let i = 0; i < 250; i++) {
       // 生成一个随机增量，介于 -1 和 1 之间
       const increment = Math.ceil((Math.random() - 0.5) * 50);
       // 将当前值与随机增量相加，并将结果限制在 0 到 1000 之间
