@@ -22,12 +22,25 @@
         default: "#3F6EFF",
       },
       data: {
-        type: Array,
-        default: () => [1000, 3500, 500, 600, 700, 250, 3000],
-      },
+  type: Array,
+  default: () => {
+    const data = [];
+    let currentValue = 500; // 将 currentValue 定义为变量，并初始化为 0
+    for (let i = 0; i < 1000; i++) {
+      // 生成一个随机增量，介于 -1 和 1 之间
+      const increment = Math.ceil((Math.random() - 0.5) * 50);
+      // 将当前值与随机增量相加，并将结果限制在 0 到 1000 之间
+      currentValue += increment;
+      let label = "Date" + i.toLocaleString();
+      data.push({ data: currentValue, label: label });
+    }
+    return data;
+  },
+},
+
       dataLabel: {
         type: Array,
-        default: () => ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        default: () => ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"],
       },
       colorMode: {
         type: String,
@@ -116,7 +129,8 @@
     extraLayer.removeChildren();
   
     const groupLine = new Konva.Group();
-    const maxData = getMaxData(Math.max(...data));
+    const dataValues = data.map(item => item.data);
+    const maxData = getMaxData(Math.max(...dataValues));
     const points = dataToPoints(data, maxData, ctnWidth, ctnHeight);
     const fontSize = calculateFontSize(ctnWidth, ctnHeight);
     const stroke = Math.round(Math.min(ctnHeight, ctnWidth) * 0.004);
@@ -132,7 +146,6 @@
       stroke
     );
   
-    // 补足数组长度为100的连续数组
     const polyPoints = [];
     for (let i = 0; i < points.length; i++) {
       const x = points[i].x;
@@ -150,13 +163,15 @@
     }
   
     const line = new Konva.Line({
-      points: linePoints,
-      fill: colors + "80",
+      points: polyPoints,
+      // fill: colors + "80",
       stroke: colors,
       opacity: 1,
-      strokeWidth: stroke,
+      strokeWidth: stroke * 0.75,
+      // closed: true,
       // lineCap: 'round',
       lineJoin: "round",
+      tension: 0.3,
     });
   
     const poly = new Konva.Line({
@@ -164,25 +179,13 @@
       opacity: 1,
       strokeWidth: 0,
       closed: true,
+      tension: 0.3,
       fillLinearGradientStartPoint: { x: 0.5 * ctnWidth, y: ctnHeight * 1 },
       fillLinearGradientEndPoint: { x: 0.5 * ctnWidth, y: 0 },
       fillLinearGradientColorStops: [0, "#ffffff00", 1, colors + "80"],
     });
-  
-    // const groupDots = new Konva.Group();
+
     const groupHint = new Konva.Group();
-  
-    // for (let i = 0; i < points.length; i++) {
-    //   const dot = new Konva.Circle({
-    //     x: points[i].x,
-    //     y: points[i].y,
-    //     radius: stroke * 1.5,
-    //     stroke: colors,
-    //     strokeWidth: stroke,
-    //     fill: "white",
-    //   });
-    //   groupDots.add(dot);
-    // }
   
     const supportLine = new Konva.Line({
       points: [0, 0.1 * ctnHeight, 0, 0.9 * ctnHeight],
@@ -193,25 +196,28 @@
       lineJoin: "round",
       lineCap: "round",
     });
+    
+
   
-    groupLine.add(poly, line, supportLine);
+    groupLine.add(poly, line);
     layer.add(groupLine);
+    layer.add(supportLine);
   
     const anim = new Konva.Animation((frame) => {
       const elapsed = frame.time;
   
       if (elapsed < 1000) {
-        const currentChart = (elapsed / 1000) * ctnWidth;
+        const currentChart = (elapsed / 1000) * 0.8 * ctnWidth;
         groupLine.clipFunc(function (context) {
-          context.rect(0, 0, currentChart, ctnHeight);
+          context.rect(0.125 * ctnWidth + 5, 0, currentChart - 10,  0.9 * ctnHeight);
         });
       } else {
         groupLine.clipFunc(function (context) {
-          context.rect(0, 0, ctnWidth, ctnHeight);
+          context.rect(0.125 * ctnWidth + 5, 0, 0.8 * ctnWidth - 10, 0.9 * ctnHeight);
         });
         anim.stop();
   
-        for (let i = 0; i < points.length; i++) {
+        for (let i = 0; i < dataLabel.length - 1; i++) {
           let tooltip = createTooltip(
             i,
             ctnWidth,
@@ -229,8 +235,8 @@
             if (tooltip.getParent() && groupHint.getParent()) {
               const mouseX = stage.getPointerPosition().x;
               const left =
-                (i * 0.8 * ctnWidth) / (data.length - 1) + 0.1 * ctnWidth;
-              const width = (0.8 * ctnWidth) / (data.length - 1);
+                (i * 0.8 * ctnWidth) / (dataLabel.length - 1) + 0.1 * ctnWidth;
+              const width = (0.8 * ctnWidth) / (dataLabel.length - 1);
               if (mouseX > left && mouseX < left + width) {
                 tooltip.to({
                   opacity: 0.8,
@@ -284,6 +290,43 @@
   function calculateFontSize(ctnWidth, ctnHeight) {
     return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
   }
+
+  function calculateStats(data, start, end) {
+  if (start < 0 || end >= data.length || start > end) {
+    return null; // 如果起始索引或结束索引超出了数据范围，返回 null
+  }
+
+  let sum = 0;
+  let max = Number.MIN_SAFE_INTEGER;
+  let min = Number.MAX_SAFE_INTEGER;
+  let maxIndex = start;
+  let minIndex = start;
+
+  for (let i = start; i <= end; i++) {
+    const value = data[i].data;
+    sum += value;
+
+    if (value > max) {
+      max = value;
+      maxIndex = i;
+    }
+
+    if (value < min) {
+      min = value;
+      minIndex = i;
+    }
+  }
+
+  const mean = (sum / (end - start + 1)).toFixed(2); // 计算均值
+
+  return {
+    mean: mean,
+    max: max,
+    min: min,
+    maxIndex: maxIndex,
+    minIndex: minIndex
+  };
+}
   
   function createTooltip(
     i,
@@ -297,16 +340,24 @@
     fontSize,
     stroke
   ) {
+    const ratioLeft = Math.floor(i / (dataLabel.length - 1) * points.length);
+    const ratioRight = Math.min(Math.floor((i+1) / (dataLabel.length - 1) * points.length), points.length - 1);
+
+    const x = (points[ratioLeft].x  + points[ratioRight].x) / 2;
+    const y = (points[ratioLeft].y  + points[ratioRight].y) / 2;
+    const tempData = calculateStats(data, ratioLeft, ratioRight);
+    // console.log(tempData);
+
     var tooltip = new Konva.Label({
-      x: points[i].x > 0.5 * ctnWidth ? points[i].x - fontSize : points[i].x + fontSize,
-      y: points[i].y,
+      x: x > 0.5 * ctnWidth ? x - fontSize : x + fontSize,
+      y: y,
       opacity: 0,
     });
   
     tooltip.add(
       new Konva.Tag({
         fill: "#ffffff",
-        pointerDirection: points[i].x > 0.5 * ctnWidth ? "right" : "left",
+        pointerDirection: x > 0.5 * ctnWidth ? "right" : "left",
         pointerWidth: 0.01 * ctnWidth,
         pointerHeight: 0.01 * ctnWidth,
         cornerRadius: 0.01 * ctnWidth,
@@ -321,8 +372,11 @@
   
     tooltip.add(
       new Konva.Text({
-        text: dataLabel[i] + "  \n" + data[i],
-        fontSize: fontSize * 1.2,
+        text: dataLabel[i] + " -  " + dataLabel[i + 1] + "  \n\n" 
+              + "Mean: " + tempData.mean + " \n"
+              + "Max: " + tempData.max + "  " + data[tempData.maxIndex].label + "\n"
+              + "Min: " + tempData.min + "  " + data[tempData.minIndex].label ,
+        fontSize: fontSize * 1.1,
         lineHeight: 1.2,
         padding: fontSize * 0.5,
         fill: colors,
@@ -365,6 +419,7 @@
     stroke
   ) {
     const line = Math.min(Math.max(Math.floor(ctnHeight * 0.01) + 1, 5), 10);
+
     let mode = colorMode === "day" ? "#86909C" : "#D5D5D6CC";
   
     for (let i = 0; i < line; i++) {
@@ -404,9 +459,10 @@
     });
   
     layer.add(axisX);
-  
-    dataLabel.forEach((value, index) => {
-      let x = (index * 0.8 * ctnWidth) / (dataLabel.length - 1) + 0.1 * ctnWidth;
+
+    for(let i = 0; i < dataLabel.length; i ++){
+      let x = (i * 0.8 * ctnWidth) / (dataLabel.length - 1) + 0.1 * ctnWidth;
+      let value = dataLabel[i]
       const text = new Konva.Text({
         x: x,
         y: 0.92 * ctnHeight,
@@ -414,9 +470,10 @@
         fill: mode,
         text: value,
         width: (0.7 * 0.8 * ctnWidth) / (dataLabel.length - 1),
-      });
+      })
       layer.add(text);
-    });
+    }
+  
   }
   
   function dataToPoints(data, maxData, ctnWidth, ctnHeight) {
@@ -426,11 +483,11 @@
   
     for (let i = 0; i < data.length; i++) {
       let x = (i * width) / (data.length - 1) + 0.125 * ctnWidth;
-      let y = 0.9 * ctnHeight - (data[i] / maxData) * height;
+      let y = 0.9 * ctnHeight - (data[i].data / maxData) * height;
       points.push({ x: x, y: y });
     }
-    points.unshift({ x: 0.125 * ctnWidth, y: 0.9 * ctnHeight });
-    points.push({ x: 0.925 * ctnWidth, y: 0.9 * ctnHeight });
+    points.unshift({ x: 0.125 * ctnWidth, y:  ctnHeight });
+    points.push({ x: 0.925 * ctnWidth, y:  ctnHeight });
   
     return points;
   }
