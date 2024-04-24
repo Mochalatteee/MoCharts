@@ -19,21 +19,35 @@ export default {
     },
     colors: {
       type: Array,
-      default: ["#3F6EFF","#DE558A"],
+      default: ["#3F6EFF", "#DE558A"],
     },
     data: {
       type: Array,
-      default: () => [
-        [1000, 5000, 500, 600, 1700, 250, 2000],
-        [1000, 2000, 1500, 100, 400, 850, 4000],
-      ],
+      default: () => {
+        const dataSet = [];
+        for (let j = 0; j < 2; j++) {
+          const data = [];
+          let currentValue = (j + 2) * 100;
+          for (let i = 0; i < 250; i++) {
+            // 生成一个随机增量，介于 -1 和 1 之间
+            const increment = Math.ceil((Math.random() - 0.5) * 50);
+            // 将当前值与随机增量相加，并将结果限制在 0 到 1000 之间
+            currentValue += increment;
+            let label = "Date" + i.toLocaleString();
+            data.push(currentValue);
+          }
+          dataSet.push(data);
+        }
+        // console.log(dataSet);
+        return dataSet;
+      },
     },
     dataLabel: {
       type: Object,
       default: () => ({
-        item: ["item1","item2"],
-        label:["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      })
+        item: ["item1", "item2"],
+        label: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+      }),
     },
     colorMode: {
       type: String,
@@ -53,7 +67,7 @@ export default {
     const dataItem = props.dataLabel.item;
     const ctnHeight = props.size.height;
     const ctnWidth = props.size.width;
-    
+
     watch(
       () => props.colorMode,
       (newValue, oldValue) => {
@@ -143,20 +157,19 @@ function drawChart(
   );
 
   const supportLine = new Konva.Line({
-      points: [0, 0.1 * ctnHeight, 0, 0.9 * ctnHeight],
-      opacity: 0,
-      stroke: colorMode === "day" ? "#86909C" : "#D5D5D6CC",
-      strokeWidth: stroke * 0.2,
-      dash: [5, 5],
-      lineJoin: "round",
-      lineCap: "round",
-    });
-    
+    points: [0, 0.1 * ctnHeight, 0, 0.9 * ctnHeight],
+    opacity: 0,
+    stroke: colorMode === "day" ? "#86909C" : "#D5D5D6CC",
+    strokeWidth: stroke * 0.2,
+    dash: [5, 5],
+    lineJoin: "round",
+    lineCap: "round",
+  });
+
   groupLine.add(supportLine);
 
   data.forEach((data, index) => {
     const points = dataToPoints(data, maxData, ctnWidth, ctnHeight);
-    const groupDots = new Konva.Group();
 
     // 补足数组长度为100的连续数组
     const polyPoints = [];
@@ -176,11 +189,13 @@ function drawChart(
     }
 
     const line = new Konva.Line({
-      points: linePoints,
-      fill: colors[index % colors.length] + "80",
+      points: polyPoints,
+      // fill: colors[index % colors.length] + "80",
       stroke: colors[index % colors.length],
       opacity: 1,
-      strokeWidth: stroke,
+      strokeWidth: stroke * 0.7,
+      tension: 0.3,
+      closed: true,
       lineCap: "round",
       lineJoin: "round",
     });
@@ -190,25 +205,18 @@ function drawChart(
       opacity: 1,
       strokeWidth: 0,
       closed: true,
+      tension: 0.3,
       fillLinearGradientStartPoint: { x: 0.5 * ctnWidth, y: ctnHeight * 1 },
       fillLinearGradientEndPoint: { x: 0.5 * ctnWidth, y: 0 },
-      fillLinearGradientColorStops: [0, "#ffffff00", 1, colors[index % colors.length] + "80"],
+      fillLinearGradientColorStops: [
+        0,
+        "#ffffff00",
+        1,
+        colors[index % colors.length] + "80",
+      ],
     });
 
-    for (let i = 0; i < points.length; i++) {
-      const dot = new Konva.Circle({
-        x: points[i].x,
-        y: points[i].y,
-        radius: stroke * 1.5,
-        stroke: colors[index % colors.length],
-        strokeWidth: stroke,
-        fill: "white",
-      });
-      groupDots.add(dot);
-    }
-
-    groupLine.add(poly, line, groupDots);
-    // console.log(data,index);
+    groupLine.add(poly, line);
   });
 
   layer.add(groupLine);
@@ -217,22 +225,33 @@ function drawChart(
     const elapsed = frame.time;
 
     if (elapsed < 1000) {
-      const currentChart = (elapsed / 1000) * ctnWidth;
+      const currentChart = (elapsed / 1000) * 0.8 * ctnWidth;
       groupLine.clipFunc(function (context) {
-        context.rect(0, 0, currentChart, ctnHeight);
+        context.rect(
+          0.125 * ctnWidth + 5,
+          0,
+          currentChart - 10,
+          0.9 * ctnHeight
+        );
       });
     } else {
       groupLine.clipFunc(function (context) {
-        context.rect(0, 0, ctnWidth, ctnHeight);
+        context.rect(
+          0.125 * ctnWidth + 5,
+          0,
+          0.8 * ctnWidth - 10,
+          0.9 * ctnHeight
+        );
       });
       anim.stop();
 
-      for (let i = 0; i < dataLabel.length; i++) {
+      for (let i = 0; i < dataLabel.length - 1; i++) {
         const itemLength = dataItem.reduce((max, str) => {
-            return Math.max(max, str.length);
+          return Math.max(max, str.length);
         }, 0);
 
-        const length = Math.max(...data.flat()).toLocaleString().length  + itemLength;
+        const length =
+          Math.max(...data.flat()).toLocaleString().length + itemLength;
         let tooltip = createTooltip(
           i,
           ctnWidth,
@@ -259,7 +278,10 @@ function drawChart(
               tooltip.to({
                 opacity: 0.8,
                 duration: 0,
-                x: mouseX > 0.7 * ctnWidth ? mouseX - length * fontSize - 10: mouseX + 10,
+                x:
+                  mouseX > 0.7 * ctnWidth
+                    ? mouseX - length * fontSize - 10
+                    : mouseX + 10,
                 y: mouseY,
               });
             } else {
@@ -275,14 +297,11 @@ function drawChart(
           if (tooltip.getParent() && groupHint.getParent()) {
             tooltip.to({
               opacity: 0,
-              // duration: 0.1,
+              duration: 0,
             });
           }
         });
-
       }
-
-
     }
   });
 
@@ -314,6 +333,43 @@ function calculateFontSize(ctnWidth, ctnHeight) {
   return Math.ceil(Math.min(ctnWidth, ctnHeight) / 40);
 }
 
+function calculateStats(data, start, end) {
+  if (start < 0 || end >= data.length || start > end) {
+    return null; // 如果起始索引或结束索引超出了数据范围，返回 null
+  }
+
+  let sum = 0;
+  let max = Number.MIN_SAFE_INTEGER;
+  let min = Number.MAX_SAFE_INTEGER;
+  let maxIndex = start;
+  let minIndex = start;
+
+  for (let i = start; i <= end; i++) {
+    const value = data[i];
+    sum += value;
+
+    if (value > max) {
+      max = value;
+      maxIndex = i;
+    }
+
+    if (value < min) {
+      min = value;
+      minIndex = i;
+    }
+  }
+
+  const mean = (sum / (end - start + 1)).toFixed(2); // 计算均值
+
+  return {
+    mean: mean,
+    max: max,
+    min: min,
+    maxIndex: maxIndex,
+    minIndex: minIndex
+  };
+}
+
 function createTooltip(
   i,
   ctnWidth,
@@ -327,29 +383,38 @@ function createTooltip(
   fontSize,
   stroke
 ) {
+  const ratioLeft = Math.floor(i / (dataLabel.length - 1) * data[0].length);
+  const ratioRight = Math.min(Math.floor((i+1) / (dataLabel.length - 1) * data[0].length), data[0].length - 1);
+  const tempData = [];
+  for (let i = 0; i < data.length; i++){
+    const temp = calculateStats(data[i],ratioLeft,ratioRight);
+    tempData.push(temp);
+  }
+
   const itemLength = dataItem.reduce((max, str) => {
     return Math.max(max, str.length);
-}, 0);
+  }, 0);
+  
 
-  const length = Math.max(...data.flat()).toLocaleString().length  + itemLength;
+  const length = Math.max(...data.flat()).toLocaleString().length + 4 + tempData[0].mean.length / 2;
   const groupText = new Konva.Group();
   const x = (i * 0.8 * ctnWidth) / (dataLabel.length - 1) + 0.1 * ctnWidth;
 
   var tooltip = new Konva.Label({
     x: x,
-    y: 0.9*ctnHeight,
+    y: 0.9 * ctnHeight,
     opacity: 0,
   });
 
   tooltip.add(
     new Konva.Rect({
       fill: "#ffffff",
-      x:0,
-      y:0,
+      x: 0,
+      y: 0,
       cornerRadius: 0.01 * ctnWidth,
       lineJoin: "round",
       width: fontSize * length,
-      height: (data.length + 1) * fontSize * 2,
+      height: (data.length * 2 + 2) * fontSize * 2,
       stroke: colors[0],
       strokeWidth: 0.5 * stroke,
       shadowColor: colors[0],
@@ -359,25 +424,25 @@ function createTooltip(
   );
 
   const item = new Konva.Text({
-    text: dataLabel[i],
+    text: dataLabel[i] + " - " + dataLabel[i+1] + "\n",
     fontSize: fontSize * 1.2,
     padding: fontSize,
     fill: "#454545",
     lineHeight: 1.2,
-  })
+  });
   groupText.add(item);
 
-  data.forEach((value, index)=>{
-    const text =  new Konva.Text({
-        y: (index + 1) * fontSize * 1.5,
-        text:"● " +  dataItem[index] + " " + data[index][i] + '\n',
-        fontSize: fontSize * 1.2,
-        lineHeight: 1.2,
-        padding: fontSize ,
-        fill: colors[index % colors.length],
-      })
+  tempData.forEach((value, index) => {
+    const text = new Konva.Text({
+      y: (index * 2 + 1.5) * fontSize * 2,
+      text: "● " + dataItem[index] + "\n" + "Mean: " + value.mean + "\n",
+      fontSize: fontSize * 1.2,
+      lineHeight: 1.3,
+      padding: fontSize,
+      fill: colors[index % colors.length],
+    });
     groupText.add(text);
-  })
+  });
 
   tooltip.add(groupText);
   groupHint.add(tooltip);

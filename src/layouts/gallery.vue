@@ -216,25 +216,49 @@
       </div>
     </div>
 
+
     <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
       <div class="gallery-chart-ctn">
         <div class="title-box">
-          <p>Large Line Chart</p>
+          <p>Multi-Large-Data Line Chart</p>
           <div class="modify-ctn">
-            <button @click="toggleColorMode('multLine')">
-              {{ chartColorModes["multLine"] === "day" ? "Night" : "Day" }}
+            <button @click="toggleColorMode('largeLine')">
+              {{ chartColorModes["largeLine"] === "day" ? "Night" : "Day" }}
             </button>
-            <button @click="goToChart('multLine')">Details</button>
+            <button @click="goToChart('largeLine')">Details</button>
           </div>
         </div>
 
         <div ref="chartBox" class="chart-box">
           <largeLineChart
             v-if="isSizeAvailable"
-            :color-mode="chartColorModes['line']"
+            :color-mode="chartColorModes['largeLine']"
             :size="divSize"
           >
           </largeLineChart>
+        </div>
+      </div>
+    </div>
+
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Large Line Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('largeLine')">
+              {{ chartColorModes["largeLine"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('largeLine')">Details</button>
+          </div>
+        </div>
+
+        <div ref="chartBox" class="chart-box">
+          <multiLargeLineChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['largeLine']"
+            :size="divSize"
+          >
+          </multiLargeLineChart>
         </div>
       </div>
     </div>
@@ -253,6 +277,7 @@ import radarChart from "../components/radarChart.vue";
 import multiLineChart from "../components/multiLineChart.vue";
 import multiRadarChart from "../components/multiRadarChart.vue";
 import largeLineChart from "../components/largeLineChart.vue";
+import multiLargeLineChart from "../components/multiLargeLineChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -273,6 +298,7 @@ export default {
     multiLineChart,
     multiRadarChart,
     largeLineChart,
+    multiLargeLineChart,
   },
   data() {
     return {
@@ -285,7 +311,8 @@ export default {
         stackedBar: "day",
         radar: "day",
         multLine: "day",
-        multRadar: "day"
+        multRadar: "day",
+        largeLine: "day"
       },
     };
   },
