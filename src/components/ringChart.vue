@@ -1,8 +1,4 @@
 <template>
-  <div class="modify-box">
-    <!-- <button @click="toggleColorMode">切换颜色模式</button> -->
-
-  </div>
   <div id="box">
     <div id="container" ref="container"></div>
   </div>

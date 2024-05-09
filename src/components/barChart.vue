@@ -1,7 +1,4 @@
 <template>
-  <div class="modify-box">
-    <!-- <div class="modify-ctn"><button @click="toggleColorMode">{{ colorMode === 'day' ? 'Night' : 'Day' }}</button></div> -->
-  </div>
   <div>
     <div id="container" ref="container"></div>
   </div>

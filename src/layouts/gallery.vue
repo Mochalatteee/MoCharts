@@ -262,6 +262,52 @@
         </div>
       </div>
     </div>
+
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Mixed Line Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('largeLine')">
+              {{ chartColorModes["largeLine"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('largeLine')">Details</button>
+          </div>
+        </div>
+
+        <div ref="chartBox" class="chart-box">
+          <mixedLineChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['largeLine']"
+            :size="divSize"
+          >
+          </mixedLineChart>
+        </div>
+      </div>
+    </div>
+
+    <div class="gallery-component-ctn" v-if="type === 'all' || type === 'line'">
+      <div class="gallery-chart-ctn">
+        <div class="title-box">
+          <p>Dynamic Large Line Chart</p>
+          <div class="modify-ctn">
+            <button @click="toggleColorMode('largeLine')">
+              {{ chartColorModes["largeLine"] === "day" ? "Night" : "Day" }}
+            </button>
+            <button @click="goToChart('largeLine')">Details</button>
+          </div>
+        </div>
+
+        <div ref="chartBox" class="chart-box">
+          <dynamicLargeLineChart
+            v-if="isSizeAvailable"
+            :color-mode="chartColorModes['largeLine']"
+            :size="divSize"
+          >
+          </dynamicLargeLineChart>
+        </div>
+      </div>
+    </div>
     
   </div>
 </template>
@@ -278,6 +324,8 @@ import multiLineChart from "../components/multiLineChart.vue";
 import multiRadarChart from "../components/multiRadarChart.vue";
 import largeLineChart from "../components/largeLineChart.vue";
 import multiLargeLineChart from "../components/multiLargeLineChart.vue";
+import mixedLineChart from "../components/mixedLineChart.vue";
+import dynamicLargeLineChart from "../components/dynamicLargeLineChart.vue";
 import { ref, onMounted, watch } from "vue";
 
 export default {
@@ -299,6 +347,8 @@ export default {
     multiRadarChart,
     largeLineChart,
     multiLargeLineChart,
+    mixedLineChart,
+    dynamicLargeLineChart
   },
   data() {
     return {
@@ -333,11 +383,13 @@ export default {
 
     // 监听 chartBox 的变化
     watch(chartBox, (newValue, oldValue) => {
+      console.log(chartBox)
       if (chartBox.value && newValue != oldValue) {
         const width = newValue.offsetWidth - 20;
         const height = newValue.offsetHeight - 20;
         divSize.value = { width, height };
         isSizeAvailable.value = true;
+        console.log("watch",divSize.value);
       }
     });
 
@@ -349,11 +401,19 @@ export default {
         divSize.value = { width, height };
         isSizeAvailable.value = true;
       }
+      // window.addEventListener('resize', updateDimensions(chartBox,divSize,isSizeAvailable));
     });
 
     return { chartBox, divSize, isSizeAvailable };
   },
 };
+function updateDimensions(chartBox,divSize,isSizeAvailable){
+  const width = chartBox.value.offsetWidth - 20;
+  const height = chartBox.value.offsetHeight - 20;
+  divSize.value = { width, height };
+  console.log("change",divSize.value);
+  isSizeAvailable.value = true;
+}
 </script>
 
 <style scoped>

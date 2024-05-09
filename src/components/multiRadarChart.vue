@@ -19,7 +19,7 @@ export default {
     },
     colors: {
       type: Array,
-      default: ["#3F6EFF","#DE558A"],
+      default: ["#3F6EFF", "#DE558A"],
     },
     colorMode: {
       type: String,
@@ -35,8 +35,9 @@ export default {
     dataLabel: {
       type: Object,
       default: () => ({
-        item: ["item1","item2"],
-        label:["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]}),
+        item: ["item1", "item2"],
+        label: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      }),
     },
   },
 
@@ -216,73 +217,73 @@ function drawChart(
 
     layer.add(line, text);
   }
-let dataLine = [];
+  let dataLine = [];
 
-
-for(let i = 0; i < dataSize; i++){
-      // 绘制雷达图的数据线
-  const line = new Konva.Line({
-    points: data
-      .map((point, index) => {
-        const value = point.value[i] * radius;
-        const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
-        const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
-        return [x, y];
-      })
-      .flat(),
-    stroke: colors[i % colors.length],
-    strokeWidth: stroke,
-    closed: true,
-    fill: colorMode === "day" ? colors[i % colors.length] + "30" : colors[i % colors.length] + "60",
-  });
-  groupRadar.add(line);
-  dataLine.push(line);
-
-  const groupCircle = new Konva.Group();
-   
-  data.forEach((point,index)=>{
-    const value = point.value[i] * radius;
-    const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
-    const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
-    const circle = new Konva.Circle({
-      x: x,
-      y: y,
-      radius: 1.5 * stroke,
-      fill: "white",
+  for (let i = 0; i < dataSize; i++) {
+    // 绘制雷达图的数据线
+    const line = new Konva.Line({
+      points: data
+        .map((point, index) => {
+          const value = point.value[i] * radius;
+          const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
+          const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
+          return [x, y];
+        })
+        .flat(),
       stroke: colors[i % colors.length],
       strokeWidth: stroke,
-      name: point.label + i, // 设置名称
+      closed: true,
+      fill:
+        colorMode === "day"
+          ? colors[i % colors.length] + "30"
+          : colors[i % colors.length] + "60",
     });
-    groupCircle.add(circle);
+    groupRadar.add(line);
+    dataLine.push(line);
 
-  })
-  groupRadar.add(groupCircle);
-}
+    const groupCircle = new Konva.Group();
+
+    data.forEach((point, index) => {
+      const value = point.value[i] * radius;
+      const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
+      const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
+      const circle = new Konva.Circle({
+        x: x,
+        y: y,
+        radius: 1.5 * stroke,
+        fill: "white",
+        stroke: colors[i % colors.length],
+        strokeWidth: stroke,
+        name: point.label + i, // 设置名称
+      });
+      groupCircle.add(circle);
+    });
+    groupRadar.add(groupCircle);
+  }
   layer.add(groupRadar);
 
-    const longestLabel = data.reduce((longest, item) => {
+  const longestLabel = data.reduce((longest, item) => {
     return item.label.length > longest.length ? item.label : longest;
-    }, '');
+  }, "");
 
-    const longestItem = dataLabel.item.reduce((longest, item) =>{
-        return item.length > longest.length ? item : longest;
-    })
+  const longestItem = dataLabel.item.reduce((longest, item) => {
+    return item.length > longest.length ? item : longest;
+  });
 
-  const length = Math.max(longestLabel.length + longestItem.length + 2, 6 );
+  const length = Math.max(longestLabel.length + longestItem.length + 2, 6);
   data.forEach((point, index) => {
-    
     // console.log(length);
 
     const tooltip = new Konva.Label({
       x: center.x,
       y: center.y,
-      opacity: 1,
+      opacity: 0,
     });
 
     tooltip.add(
       new Konva.Rect({
-        x:0,
-        y:0,
+        x: 0,
+        y: 0,
         fill: "#ffffff",
         cornerRadius: 0.01 * ctnWidth,
         lineJoin: "round",
@@ -297,24 +298,29 @@ for(let i = 0; i < dataSize; i++){
     );
     const groupText = new Konva.Group();
     const item = new Konva.Text({
-        text: point.label,
-        fontSize: fontSize * 1.2,
-        padding: fontSize,
-        fill: "#454545",
-        lineHeight: 1.2,
-    })
+      text: point.label,
+      fontSize: fontSize * 1.2,
+      padding: fontSize,
+      fill: "#454545",
+      lineHeight: 1.2,
+    });
     groupText.add(item);
 
-    for(let i = 0; i < dataSize; i++){
-        const text = new Konva.Text({
-            y: ( i + 1) * fontSize * 1.5,
-            text: "● " + dataLabel.item[i] + " " + (point.value[i] * 100).toFixed(1) + "%",
-            fontSize: fontSize * 1.2,
-            lineHeight: 1.2,
-            padding: fontSize ,
-            fill: colors[i],
-        }) 
-        groupText.add(text);
+    for (let i = 0; i < dataSize; i++) {
+      const text = new Konva.Text({
+        y: (i + 1) * fontSize * 1.5,
+        text:
+          "● " +
+          dataLabel.item[i] +
+          " " +
+          (point.value[i] * 100).toFixed(1) +
+          "%",
+        fontSize: fontSize * 1.2,
+        lineHeight: 1.2,
+        padding: fontSize,
+        fill: colors[i],
+      });
+      groupText.add(text);
     }
 
     tooltip.add(groupText);
@@ -327,12 +333,12 @@ for(let i = 0; i < dataSize; i++){
 
       // 计算鼠标位置相对于雷达图中心的偏移量
       const offsetX = mouseX - center.x;
-      const offsetY = - (mouseY - center.y);
+      const offsetY = -(mouseY - center.y);
 
       // 计算鼠标位置相对于雷达图中心的极坐标
       const r = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
       let a = Math.atan2(offsetX, offsetY);
-      if (a < - 0.5 * angle) {
+      if (a < -0.5 * angle) {
         a += 2 * Math.PI; // 转换为 0 到 2π 的角度
       }
 
@@ -342,37 +348,37 @@ for(let i = 0; i < dataSize; i++){
       // 判断鼠标位置是否在扇形范围内
       const isInSector = a >= startAngle && a <= endAngle && r <= radius;
       if (isInSector) {
-        if(tooltip.getParent() && groupHint.getParent()){
-                    tooltip.to({
-          opacity: 0.8,
-          duration: 0,
-          x: mouseX > 0.7 * ctnWidth ? mouseX - 10 - length * fontSize:mouseX + 10,
-          y: mouseY
-        });
+        if (tooltip.getParent() && groupHint.getParent()) {
+          tooltip.to({
+            opacity: 0.8,
+            duration: 0,
+            x:
+              mouseX > 0.7 * ctnWidth
+                ? mouseX - 10 - length * fontSize
+                : mouseX + 10,
+            y: mouseY,
+          });
         }
-
       } else {
-        if(tooltip.getParent() && groupHint.getParent()){
-                    tooltip.to({
-          opacity: 0,
-          duration: 0,
-        });
+        if (tooltip.getParent() && groupHint.getParent()) {
+          tooltip.to({
+            opacity: 0,
+            duration: 0,
+          });
         }
-
       }
     });
 
     stage.on("mouseleave", () => {
-
-          if(tooltip.getParent() && groupHint.getParent()){
-                    tooltip.to({
+      if (tooltip.getParent() && groupHint.getParent()) {
+        tooltip.to({
           opacity: 0,
           duration: 0,
         });
-        }
+      }
     });
   });
-  
+
   extraLayer.add(groupHint);
 
   const anim = new Konva.Animation((frame) => {
@@ -382,32 +388,32 @@ for(let i = 0; i < dataSize; i++){
     if (elapsed < duration) {
       // 计算当前时间对应的半径
       const currentRadius = (elapsed / duration) * radius;
-      for(let i = 0; i < dataSize; i ++){
-              // 更新数据线的位置
+      for (let i = 0; i < dataSize; i++) {
+        // 更新数据线的位置
         dataLine[i].points(
-            data
+          data
             .map((point, index) => {
-                const value = point.value[i] * currentRadius;
-                const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
-                const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
-                return [x, y];
+              const value = point.value[i] * currentRadius;
+              const x =
+                center.x + value * Math.cos(index * angle - Math.PI / 2);
+              const y =
+                center.y + value * Math.sin(index * angle - Math.PI / 2);
+              return [x, y];
             })
             .flat()
         );
 
         // 更新数据点的位置
         data.forEach((point, index) => {
-            
-            const value = point.value[i] * currentRadius;
-            const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
-            const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
-            const circle = groupRadar.findOne(`.${point.label + i}`);
+          const value = point.value[i] * currentRadius;
+          const x = center.x + value * Math.cos(index * angle - Math.PI / 2);
+          const y = center.y + value * Math.sin(index * angle - Math.PI / 2);
+          const circle = groupRadar.findOne(`.${point.label + i}`);
 
-            if (circle) {
+          if (circle) {
             circle.position({ x: x, y: y }); // 更新位置
-            }
+          }
         });
-
       }
 
       layer.batchDraw(); // 手动进行图层的重新绘制
@@ -428,6 +434,7 @@ for(let i = 0; i < dataSize; i++){
   anim.start();
 
   layer.draw();
+  extraLayer.draw();
 }
 
 function calculateFontSize(ctnWidth, ctnHeight) {

@@ -1,9 +1,4 @@
 <template>
-  <div class="modify-box">
-    <!-- <div><p>南丁格尔玫瑰图示例</p></div>
-    <button @click="toggleColorMode">切换颜色模式</button> -->
-
-  </div>
   <div id="box">
     <div id="container" ref="container"></div>
   </div>
@@ -175,7 +170,7 @@ function drawPieChart(layer, extraLayer, radius,innerRadius, centerX, centerY, c
         points: [innerX, innerY, outerX, outerY,
         offset >  Math.PI ? outerX - 0.1* centerX: outerX + 0.1* centerX, outerY,],
         stroke: colors[index % colors.length],
-        strokeWidth: stroke - 1,
+        strokeWidth: stroke,
         lineCap: 'round',
         lineJoin: 'round'
       });
